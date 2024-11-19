@@ -1,71 +1,63 @@
 ---
 title: Introduction
-description: 'Welcome to the home of your new documentation'
+description: 'Advertising performance measurement reinvented'
+sidebarTitle: 'Introduction'
+icon: "house"
+iconType: "duotone"
 ---
 
-<img
-  className="block dark:hidden"
+{/* <img
+  className="block"
   src="/images/hero-light.svg"
   alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+/> */}
 
-## Setting up
+Staminads is a platform for measuring the performance of your advertising campaigns by focusing on the user-engagement.
 
-The first step to world-class documentation is setting up your editing environments.
+## Essential Concepts
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
+**The 2 core pillars of Staminads are:**
+1. Quantity: Volume of sessions
+2. Quality: TimeScore
 
-## Make it yours
+### TimeScore
 
-Update your docs to your brand and add valuable content for the best user conversion.
+Web marketers are used to measure the performance of their campaigns by looking at conversions (ROI, ROAS etc...). Sadly, **due to technical and legal constraints this is not possible anymore** (adblockers, user consent, cookie lifetime, cross-device journeys etc...).
+
+Staminads brings a new way to measure the performance of your advertising campaigns by focusing on the user-engagement. And the best way to measure user-engagement is to look at the **time spent on your website**.
+
+The **TimeScore** is the **median** value of the time spent on your website for each source of traffic over a given period of time, expressed in seconds.
+
+### eTraffic
+
+The **eTraffic** (effective traffic) is the volume of sessions weighted by the TimeScore, relative to the total volume of sessions and highest possible TimeScore.
+
+The **eTraffic** is used to compare the performance of different sources of traffic & attribute conversions.
+
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Setup"
+    icon="rocket"
+    iconType="duotone"
+    href="setup"
   >
-    Customize your docs to your company's colors and brands
+    Learn how to setup your workspace and start using Staminads.
   </Card>
   <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    title="Explore Reports"
+    icon="chart-pie"
+    iconType="duotone"
+    href="reports"
   >
-    Automatically generate endpoints from an OpenAPI spec
+    Explore the reports that Staminads offers and learn how to use them to gain deep insights from your advertising performance.
   </Card>
   <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
+    title="Google Ads"
+    icon={<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Group" transform="translate(0.000000, 1.000000)" fill-rule="nonzero"><path d="M8.25140686,2.77043267 C8.48214466,2.1594591 8.79940914,1.5969755 9.27049881,1.14116982 C11.1548575,-0.711146878 14.2698178,-0.245643206 15.5484898,2.08187515 C16.5098973,3.84690991 17.5289892,5.5731527 18.519239,7.31879147 L23.4801017,16.0275893 C24.8549144,18.4617856 23.3647328,21.5360495 20.6343355,21.9530632 C18.9614864,22.205211 17.3943922,21.4293715 16.5291254,19.9164846 L12.1643354,12.274466 C12.1354932,12.216278 12.0970369,12.1677881 12.0585806,12.1192981 C11.9047554,11.9932242 11.8374568,11.8089623 11.7413161,11.6440964 L8.53021504,6.02895837 C8.15526611,5.36949484 7.98221276,4.65184334 8.00144091,3.89539988 C8.03028314,3.50748015 8.07835351,3.11956042 8.25140686,2.77043267"  fill="#3C8BD9"></path><path d="M8.16972878,3 C8.08311461,3.35768556 8.00612423,3.71537113 7.98687664,4.09292811 C7.95800525,4.92752776 8.16010499,5.70251315 8.56430446,6.42781999 L11.7305337,12.081239 C11.8267717,12.2501461 11.903762,12.4190532 12,12.5780245 L10.2580927,15.6680304 L7.82327209,20 C7.7847769,20 7.77515311,19.9801286 7.76552931,19.9503214 C7.75590551,19.8708358 7.7847769,19.8012858 7.8040245,19.7218001 C8.19860017,18.2314436 7.87139108,16.9099942 6.88013998,15.7773232 C6.27384077,15.0917592 5.50393701,14.7042665 4.61854768,14.5751023 C3.46369204,14.4061952 2.44356955,14.7142022 1.52930884,15.4593805 C1.36570429,15.5885447 1.25984252,15.7773232 1.06736658,15.8766803 C1.02887139,15.8766803 1.0096238,15.8568089 1,15.8270018 L2.37620297,13.3530099 L8.1023622,3.10929281 C8.1216098,3.06954997 8.15048119,3.03974284 8.16972878,3"  fill="#FABC04"></path><path d="M1.12951425,14.5116046 L1.74870675,13.957378 C4.38842217,11.8708782 8.3534268,13.3814172 8.9291672,16.6850419 C9.07038655,17.4783465 8.99434536,18.2390495 8.75535878,18.9997526 C8.74449575,19.0649557 8.73363273,19.1192916 8.71190668,19.1844948 C8.61413944,19.3583697 8.52723523,19.5431119 8.41860496,19.7169869 C7.45179561,21.3144633 6.02873915,22.1077679 4.16029861,21.9882289 C2.02028241,21.8360883 0.336513321,20.2277447 0.0432116083,18.0977761 C-0.0980077349,17.0653934 0.108389767,16.0982138 0.64067806,15.2071045 C0.749308324,15.0114951 0.879664641,14.8376202 0.999157932,14.6420108 C1.05347306,14.598542 1.03174701,14.5116046 1.12951425,14.5116046"  fill="#34A852"></path><path d="M1.05,14.975 C1.01414298,15 1.01414298,15.04375 0.951393202,15.05 C0.942428948,15.00625 0.978285965,14.98125 1.01414298,14.95 L1.05,14.975"  fill="#FABC04"></path><path d="M7.96828427,20.05 C7.92828427,20.0088235 7.96828427,19.9794118 8.00828427,19.95 L8.04828427,19.9735294 L7.96828427,20.05"  fill="#E1C025"></path></g></g></svg>}
+    iconType="duotone"
+    href="google-ads/integration"
   >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+    Import Google Ads clicks metadata into your web sessions & unlock specific reports to get unique insights from your advertising performance.
   </Card>
 </CardGroup>
