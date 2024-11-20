@@ -16,9 +16,10 @@ Staminads is a platform for measuring the performance of your advertising campai
 
 ## Essential Concepts
 
-**The 2 core pillars of Staminads are:**
-1. Quantity: Volume of sessions
-2. Quality: TimeScore
+The 2 core pillars of Staminads are:
+
+1. **Quantity**: Volume of sessions
+2. **Quality**: TimeScore
 
 ### TimeScore
 
@@ -34,7 +35,26 @@ The **eTraffic** (effective traffic) is the volume of sessions weighted by the T
 
 The **eTraffic** is used to compare the performance of different sources of traffic & attribute conversions.
 
+### Cost per minute
 
+If you connect your Google Ads account, Staminads will automatically calculate the Cost per minute metric for you.
+
+<Note>
+This metric is similar to the ROAS metric, but instead of using the number of conversions, it uses the **TimeScore**.
+</Note>
+The formula to calculate the Cost per minute is:
+- Total Cost (in your account currency) = Google Ads spend
+- Total Time (in minutes) = (Median session duration x Number of sessions) ÷ 60
+- Cost per Minute = Total Cost ÷ Total Time
+
+For example:
+
+- If you spent $100
+- And had 50 sessions with median duration of 180 seconds (3 minutes)
+- Total Time = (180 x 50) ÷ 60 = 150 minutes
+- Cost per Minute = $100 ÷ 150 = $0.67 per minute
+
+## Next steps
 <CardGroup cols={2}>
   <Card
     title="Setup"
@@ -45,12 +65,12 @@ The **eTraffic** is used to compare the performance of different sources of traf
     Learn how to setup your workspace and start using Staminads.
   </Card>
   <Card
-    title="Explore Reports"
+    title="Reports"
     icon="chart-pie"
     iconType="duotone"
     href="reports"
   >
-    Explore the reports that Staminads offers and learn how to use them to gain deep insights from your advertising performance.
+    Discover the reports that Staminads offers and learn how to use them to gain deep insights from your advertising performance.
   </Card>
   <Card
     title="Google Ads"

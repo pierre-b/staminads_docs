@@ -1,1 +1,89 @@
+---
+title: Channels mapping
+description: 'Map your traffic sources to your marketing channels'
+sidebarTitle: 'Channels mapping'
+icon: "link"
+iconType: "duotone"
+---
 
+To group together your traffic sources, and analyze their performance, you can map them to your marketing channels.
+
+<Note>
+  By default, a list of common traffic sources is already created for you (Google SEO, Google Ads, Facebook Ads, TikTok Ads, etc...). However **it is important to map your significant traffic sources** to your marketing channels, otherwise they will be grouped as "not mapped".
+</Note>
+
+## Structure
+
+A channel belongs to a **group**, and a group can have multiple channels.
+
+Each channel contain a list of **filters** that will be applied to match the traffic sources.
+
+In case of overlap, the channel having the highest priority will be applied.
+
+A filter is made of a list of dimensions (utm_source, utm_medium, utm_campaign, landing_path, utm_id_from) with a condition (contains, match...).
+
+<img
+  style={{ borderRadius: '0.5rem' }}
+  src="/images/channels-mapping.png"
+/>
+
+## UTM parameters
+
+UTM parameters are a set of parameters used in URLs to track traffic sources and campaigns. They are the core pillars of digital marketing measurement.
+
+| UTM Parameter | Description |
+|--------------|-------------|
+| utm_source | Identifies the source of your traffic (e.g., google.com, facebook.com, mybusiness.com) |
+| utm_medium | Indicates the marketing medium (e.g., referral, ads, cpc, email, social) |
+| utm_campaign | Specifies the specific campaign name (e.g., black-friday-2025) |
+| utm_term | Used for paid search to note the keywords for this ad |
+| utm_content | Differentiates similar content or links within the same ad or page (e.g., ad-v1, ad-v2) |
+
+### Example
+
+For an emailing campaign, the UTM parameters will be:
+
+- utm_source: `mybusiness.com`
+- utm_medium: `email`
+- utm_campaign: `black-friday-2025`
+- utm_content: `email-v1` / `email-v2` ... if you do A/B testing
+
+For a paid Instagram campaign, the UTM parameters will be:
+
+- utm_source: `instagram.com`
+- utm_medium: `social` or `ads`
+- utm_campaign: `black-friday-2025`
+- utm_content: `black-friday-2025-v1` / `black-friday-2025-v2` ... if you do A/B testing
+
+For a Search paid campaign, the UTM parameters will be:
+
+- utm_source: `google.com`
+- utm_medium: `ads`
+- utm_campaign: `black-friday-2025`
+- utm_term: `[your keywords]`
+- utm_content: `black-friday-2025-v1` / `black-friday-2025-v2` ... if you do A/B testing
+
+### Staminads extra dimensions
+| Parameter | Description |
+|--------------|-------------|
+| utm_id | Staminads stores the ad-networks click IDs (Google Ads `gclid`, Meta `fbclid`...) in the `utm_id` dimension in the Staminads database. |
+| utm_id_from | Staminads stores the origin of the `utm_id` in the `utm_id_from` dimension in the Staminads database (e.g., `gclid`, `fbclid`, `msclkid`...). |
+
+Example: 
+
+A click on a Google Ads campaign will generate a landing-page URL similar to `https://www.yourdomain.com?utm_source=google&utm_medium=cpc&utm_campaign=black-friday-2025&gclid=Cj0KCAiAxea5BhBeEi0Ah4t5K1MSznUElMY`.
+
+In this case the `utm_id` dimension will be `Cj0KCAiAxea5BhBeEi0Ah4t5K1MSznUElMY` and the `utm_id_from` dimension will be `gclid`.
+
+## Brand organic traffic
+
+Nowadays, most people who are already familiar with your brand will search for it directly on Google. This traffic, which comes from Google's organic search results, should actually be considered **direct** traffic. If not properly categorized, it will be mixed with other organic search traffic and affect the accuracy of your organic TimeScores.
+
+The particularity of this traffic is that the landing-page is always the root domain (e.g., `https://www.yourdomain.com`).
+
+To map this traffic, you can create a new channel with the following filter:
+
+- landing_path `equals /`
+- utm_source `contains .google.`
+- utm_medium `equals referral`
+- utm_id_from `does not exist`
