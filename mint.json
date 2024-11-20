@@ -17,6 +17,10 @@
   },
   "topbarLinks": [
     {
+      "name": "Home",
+      "url": "https://www.staminads.com/"
+    },
+    {
       "name": "Support",
       "url": "mailto:support@staminads.com"
     },
