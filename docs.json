@@ -7,6 +7,10 @@
     "light": "#8B63F1"
   },
   "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "light",
+    "strict": true
+  },
   "navigation": {
     "tabs": [
       {
@@ -31,17 +35,54 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "/openapi.yaml"
+        "groups": [
+          {
+            "group": "Workspaces",
+            "openapi": "openapi.json",
+            "pages": [
+              "GET /api/workspaces.list",
+              "GET /api/workspaces.get",
+              "POST /api/workspaces.create",
+              "POST /api/workspaces.update",
+              "POST /api/workspaces.delete"
+            ]
+          },
+          {
+            "group": "Analytics",
+            "openapi": "openapi.json",
+            "pages": [
+              "POST /api/analytics.query",
+              "POST /api/analytics.extremes",
+              "GET /api/analytics.metrics",
+              "GET /api/analytics.dimensions",
+              "GET /api/analytics.tables"
+            ]
+          },
+          {
+            "group": "Filters",
+            "openapi": "openapi.json",
+            "pages": [
+              "GET /api/filters.list",
+              "GET /api/filters.get",
+              "POST /api/filters.create",
+              "POST /api/filters.update",
+              "POST /api/filters.delete",
+              "POST /api/filters.reorder",
+              "GET /api/filters.listTags",
+              "POST /api/filters.backfillStart",
+              "GET /api/filters.backfillStatus",
+              "POST /api/filters.backfillCancel",
+              "GET /api/filters.backfillList",
+              "GET /api/filters.backfillSummary"
+            ]
+          }
+        ]
       }
     ]
   },
   "logo": {
     "light": "/logo/logo.svg",
     "dark": "/logo/logo.svg"
-  },
-  "appearance": {
-    "default": "light",
-    "strict": true
   },
   "navbar": {
     "links": [

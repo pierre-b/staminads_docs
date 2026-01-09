@@ -1,0 +1,2046 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Staminads API",
+    "description": "Web analytics platform for tracking TimeScore metrics",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://your-instance.example.com",
+      "description": "Your Staminads instance"
+    }
+  ],
+  "paths": {
+    "/api/workspaces.list": {
+      "get": {
+        "operationId": "WorkspacesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List workspaces for current user",
+        "tags": [
+          "workspaces"
+        ]
+      }
+    },
+    "/api/workspaces.get": {
+      "get": {
+        "operationId": "WorkspacesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get workspace by ID",
+        "tags": [
+          "workspaces"
+        ]
+      }
+    },
+    "/api/workspaces.create": {
+      "post": {
+        "operationId": "WorkspacesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkspaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new workspace",
+        "tags": [
+          "workspaces"
+        ]
+      }
+    },
+    "/api/workspaces.update": {
+      "post": {
+        "operationId": "WorkspacesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkspaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update an existing workspace",
+        "tags": [
+          "workspaces"
+        ]
+      }
+    },
+    "/api/workspaces.delete": {
+      "post": {
+        "operationId": "WorkspacesController_delete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Delete a workspace",
+        "tags": [
+          "workspaces"
+        ]
+      }
+    },
+    "/api/filters.list": {
+      "get": {
+        "operationId": "FiltersController_list",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "required": false,
+            "in": "query",
+            "description": "Filter by tags",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of filters"
+          }
+        },
+        "summary": "List filters for workspace",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.get": {
+      "get": {
+        "operationId": "FiltersController_get",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filter definition"
+          }
+        },
+        "summary": "Get filter by ID",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.create": {
+      "post": {
+        "operationId": "FiltersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created filter"
+          }
+        },
+        "summary": "Create filter",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.update": {
+      "post": {
+        "operationId": "FiltersController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated filter"
+          }
+        },
+        "summary": "Update filter",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.delete": {
+      "post": {
+        "operationId": "FiltersController_delete",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete filter",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.reorder": {
+      "post": {
+        "operationId": "FiltersController_reorder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderFiltersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Reorder filters",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.listTags": {
+      "get": {
+        "operationId": "FiltersController_listTags",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of unique tags"
+          }
+        },
+        "summary": "List unique tags across all filters",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.backfillStart": {
+      "post": {
+        "operationId": "FiltersController_backfillStart",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartBackfillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillStartResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start background backfill for all filters",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.backfillStatus": {
+      "get": {
+        "operationId": "FiltersController_backfillStatus",
+        "parameters": [
+          {
+            "name": "task_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task progress"
+          }
+        },
+        "summary": "Get backfill task status",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.backfillCancel": {
+      "post": {
+        "operationId": "FiltersController_backfillCancel",
+        "parameters": [
+          {
+            "name": "task_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackfillSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Cancel running backfill task",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.backfillList": {
+      "get": {
+        "operationId": "FiltersController_backfillList",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tasks"
+          }
+        },
+        "summary": "List backfill tasks for workspace",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/filters.backfillSummary": {
+      "get": {
+        "operationId": "FiltersController_backfillSummary",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Backfill summary"
+          }
+        },
+        "summary": "Get backfill status summary for workspace",
+        "tags": [
+          "filters"
+        ]
+      }
+    },
+    "/api/analytics.query": {
+      "post": {
+        "operationId": "AnalyticsController_query",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyticsQueryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Execute an analytics query",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/analytics.extremes": {
+      "post": {
+        "operationId": "AnalyticsController_extremes",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtremesQueryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get min/max extremes of a metric across grouped data",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/analytics.metrics": {
+      "get": {
+        "operationId": "AnalyticsController_getMetrics",
+        "parameters": [
+          {
+            "name": "table",
+            "required": false,
+            "in": "query",
+            "description": "Filter metrics by table (sessions or pages)",
+            "schema": {
+              "enum": [
+                "sessions",
+                "pages",
+                "goals"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get available metrics",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/analytics.dimensions": {
+      "get": {
+        "operationId": "AnalyticsController_getDimensions",
+        "parameters": [
+          {
+            "name": "table",
+            "required": false,
+            "in": "query",
+            "description": "Filter dimensions by table (sessions or pages)",
+            "schema": {
+              "enum": [
+                "sessions",
+                "pages",
+                "goals"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get available dimensions",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/analytics.tables": {
+      "get": {
+        "operationId": "AnalyticsController_getTables",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get available analytics tables",
+        "tags": [
+          "analytics"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "InitializeDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ]
+      },
+      "UpdateSmtpDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "from_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "from_email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "enabled",
+          "host",
+          "port",
+          "from_name",
+          "from_email"
+        ]
+      },
+      "SmtpSettingsDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "from_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "from_email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "enabled",
+          "host",
+          "port",
+          "from_name",
+          "from_email"
+        ]
+      },
+      "DeleteSmtpDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id"
+        ]
+      },
+      "TestSmtpDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "to_email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "to_email"
+        ]
+      },
+      "AnnotationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "pattern": "/^([01]\\d|2[0-3]):([0-5]\\d)$/"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "color": {
+            "type": "string",
+            "pattern": "/^#[0-9A-Fa-f]{6}$/"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "time",
+          "timezone",
+          "title"
+        ]
+      },
+      "CreateWorkspaceSettingsDto": {
+        "type": "object",
+        "properties": {
+          "timescore_reference": {
+            "type": "number",
+            "minimum": 1
+          },
+          "bounce_threshold": {
+            "type": "number",
+            "minimum": 1
+          },
+          "geo_enabled": {
+            "type": "boolean"
+          },
+          "geo_store_city": {
+            "type": "boolean"
+          },
+          "geo_store_region": {
+            "type": "boolean"
+          },
+          "geo_coordinates_precision": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnnotationDto"
+            }
+          }
+        }
+      },
+      "CreateWorkspaceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "pattern": "/^[a-z][a-z0-9_]*$/"
+          },
+          "name": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/CreateWorkspaceSettingsDto"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "website",
+          "timezone",
+          "currency"
+        ]
+      },
+      "SmtpSettingsUpdateDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "password_encrypted": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "from_name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "from_email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "enabled",
+          "host",
+          "port",
+          "from_name",
+          "from_email"
+        ]
+      },
+      "UpdateWorkspaceSettingsDto": {
+        "type": "object",
+        "properties": {
+          "timescore_reference": {
+            "type": "number",
+            "minimum": 1
+          },
+          "bounce_threshold": {
+            "type": "number",
+            "minimum": 1
+          },
+          "custom_dimensions": {
+            "type": "object"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "integrations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "geo_enabled": {
+            "type": "boolean"
+          },
+          "geo_store_city": {
+            "type": "boolean"
+          },
+          "geo_store_region": {
+            "type": "boolean"
+          },
+          "geo_coordinates_precision": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnnotationDto"
+            }
+          },
+          "smtp": {
+            "$ref": "#/components/schemas/SmtpSettingsUpdateDto"
+          },
+          "allowed_domains": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 253,
+              "pattern": "/^(\\*\\.)?([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$/"
+            }
+          }
+        }
+      },
+      "UpdateWorkspaceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "initializing",
+              "active",
+              "inactive",
+              "error"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/UpdateWorkspaceSettingsDto"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "UpdateRoleDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "editor",
+              "viewer"
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "user_id",
+          "role"
+        ]
+      },
+      "RemoveMemberDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "user_id"
+        ]
+      },
+      "TransferOwnershipDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "new_owner_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "new_owner_id"
+        ]
+      },
+      "CreateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "workspace_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "editor",
+              "viewer"
+            ]
+          },
+          "expires_at": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "workspace_id",
+          "name",
+          "role"
+        ]
+      },
+      "CreateApiKeyResponseDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The full API key. This is ONLY returned once and is not stored.\nFormat: stam_live_<64 hex chars>"
+          },
+          "apiKey": {
+            "type": "object",
+            "description": "Public API key metadata (without the key_hash)"
+          }
+        },
+        "required": [
+          "key",
+          "apiKey"
+        ]
+      },
+      "CreateInvitationDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "editor",
+              "viewer"
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "email",
+          "role"
+        ]
+      },
+      "InvitationIdDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "AcceptInvitationDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "FilterConditionDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "utm_source",
+              "utm_medium",
+              "utm_campaign",
+              "utm_term",
+              "utm_content",
+              "utm_id",
+              "utm_id_from",
+              "referrer",
+              "referrer_domain",
+              "referrer_path",
+              "is_direct",
+              "landing_page",
+              "landing_domain",
+              "landing_path",
+              "path",
+              "device",
+              "browser",
+              "browser_type",
+              "os",
+              "user_agent",
+              "connection_type",
+              "language",
+              "timezone"
+            ]
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "not_equals",
+              "contains",
+              "not_contains",
+              "is_empty",
+              "is_not_empty",
+              "regex"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "operator"
+        ]
+      },
+      "FilterOperationDto": {
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "enum": [
+              "channel",
+              "channel_group",
+              "stm_1",
+              "stm_2",
+              "stm_3",
+              "stm_4",
+              "stm_5",
+              "stm_6",
+              "stm_7",
+              "stm_8",
+              "stm_9",
+              "stm_10",
+              "utm_source",
+              "utm_medium",
+              "utm_campaign",
+              "utm_term",
+              "utm_content",
+              "referrer_domain",
+              "is_direct"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "set_value",
+              "unset_value",
+              "set_default_value"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dimension",
+          "action"
+        ]
+      },
+      "CreateFilterDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterConditionDto"
+            }
+          },
+          "operations": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterOperationDto"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "name",
+          "conditions",
+          "operations"
+        ]
+      },
+      "UpdateFilterDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "order": {
+            "type": "number"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterConditionDto"
+            }
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterOperationDto"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "id"
+        ]
+      },
+      "BackfillSuccessResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "ReorderFiltersDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "filter_ids": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "workspace_id",
+          "filter_ids"
+        ]
+      },
+      "StartBackfillDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "lookback_days": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 365
+          },
+          "chunk_size_days": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "batch_size": {
+            "type": "number",
+            "minimum": 100,
+            "maximum": 50000
+          }
+        },
+        "required": [
+          "workspace_id",
+          "lookback_days"
+        ]
+      },
+      "BackfillStartResponseDto": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "The unique identifier for the backfill task"
+          }
+        },
+        "required": [
+          "task_id"
+        ]
+      },
+      "WebsiteMetaDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "WebsiteMetaResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Website title"
+          },
+          "logo_url": {
+            "type": "string",
+            "description": "Website logo URL"
+          }
+        }
+      },
+      "CurrentPageDto": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "page_number": {
+            "type": "number",
+            "minimum": 1
+          },
+          "entered_at": {
+            "type": "number"
+          },
+          "scroll": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "path",
+          "page_number",
+          "entered_at",
+          "scroll"
+        ]
+      },
+      "SessionAttributesDto": {
+        "type": "object",
+        "properties": {
+          "referrer": {
+            "type": "string"
+          },
+          "landing_page": {
+            "type": "string"
+          },
+          "utm_source": {
+            "type": "string"
+          },
+          "utm_medium": {
+            "type": "string"
+          },
+          "utm_campaign": {
+            "type": "string"
+          },
+          "utm_term": {
+            "type": "string"
+          },
+          "utm_content": {
+            "type": "string"
+          },
+          "utm_id": {
+            "type": "string"
+          },
+          "utm_id_from": {
+            "type": "string"
+          },
+          "screen_width": {
+            "type": "number"
+          },
+          "screen_height": {
+            "type": "number"
+          },
+          "viewport_width": {
+            "type": "number"
+          },
+          "viewport_height": {
+            "type": "number"
+          },
+          "device": {
+            "type": "string"
+          },
+          "browser": {
+            "type": "string"
+          },
+          "browser_type": {
+            "type": "string"
+          },
+          "os": {
+            "type": "string"
+          },
+          "user_agent": {
+            "type": "string"
+          },
+          "connection_type": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "landing_page"
+        ]
+      },
+      "SessionPayloadDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "current_page": {
+            "$ref": "#/components/schemas/CurrentPageDto"
+          },
+          "checkpoint": {
+            "type": "number",
+            "minimum": 0
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/SessionAttributesDto"
+          },
+          "created_at": {
+            "type": "number"
+          },
+          "updated_at": {
+            "type": "number"
+          },
+          "sdk_version": {
+            "type": "string"
+          },
+          "sent_at": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "session_id",
+          "actions",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "FilterDto": {
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "notEquals",
+              "in",
+              "notIn",
+              "contains",
+              "notContains",
+              "gt",
+              "gte",
+              "lt",
+              "lte",
+              "isNull",
+              "isNotNull",
+              "between",
+              "isEmpty",
+              "isNotEmpty"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "dimension",
+          "operator"
+        ]
+      },
+      "DateRangeDto": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "preset": {
+            "type": "string",
+            "enum": [
+              "previous_30_minutes",
+              "today",
+              "yesterday",
+              "previous_7_days",
+              "previous_14_days",
+              "previous_28_days",
+              "previous_30_days",
+              "previous_90_days",
+              "previous_91_days",
+              "this_week",
+              "previous_week",
+              "this_month",
+              "previous_month",
+              "this_quarter",
+              "previous_quarter",
+              "this_year",
+              "previous_year",
+              "previous_12_months",
+              "all_time"
+            ]
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ]
+          }
+        }
+      },
+      "AnalyticsQueryDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "metrics": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "dateRange": {
+            "$ref": "#/components/schemas/DateRangeDto"
+          },
+          "compareDateRange": {
+            "$ref": "#/components/schemas/DateRangeDto"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "havingMinSessions": {
+            "type": "number",
+            "minimum": 1
+          },
+          "table": {
+            "type": "string",
+            "enum": [
+              "sessions",
+              "pages",
+              "goals"
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "metrics",
+          "dateRange"
+        ]
+      },
+      "ExtremesQueryDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "groupBy": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dateRange": {
+            "$ref": "#/components/schemas/DateRangeDto"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "havingMinSessions": {
+            "type": "number",
+            "minimum": 1
+          },
+          "table": {
+            "type": "string",
+            "enum": [
+              "sessions",
+              "pages",
+              "goals"
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "metric",
+          "groupBy",
+          "dateRange"
+        ]
+      },
+      "ExploreStateDto": {
+        "type": "object",
+        "properties": {
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "previous_30_minutes",
+              "today",
+              "yesterday",
+              "previous_7_days",
+              "previous_14_days",
+              "previous_28_days",
+              "previous_30_days",
+              "previous_90_days",
+              "previous_91_days",
+              "this_week",
+              "previous_week",
+              "this_month",
+              "previous_month",
+              "this_quarter",
+              "previous_quarter",
+              "this_year",
+              "previous_year",
+              "previous_12_months",
+              "all_time"
+            ]
+          },
+          "comparison": {
+            "type": "string",
+            "enum": [
+              "previous_period",
+              "previous_year",
+              "none"
+            ]
+          },
+          "minSessions": {
+            "type": "number"
+          },
+          "customStart": {
+            "type": "string"
+          },
+          "customEnd": {
+            "type": "string"
+          }
+        }
+      },
+      "MessageDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ]
+      },
+      "ChatRequestDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "current_state": {
+            "$ref": "#/components/schemas/ExploreStateDto"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageDto"
+            }
+          }
+        },
+        "required": [
+          "workspace_id",
+          "prompt"
+        ]
+      }
+    }
+  }
+}
