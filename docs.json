@@ -13,9 +13,15 @@
         "group": "Get Started",
         "pages": [
           "introduction",
-          "setup",
-          "channels-mapping",
-          "reports"
+          "installation",
+          "web-sdk",
+          "traffic-categorization",
+          "metrics-dimensions",
+          "dashboard",
+          "goals",
+          "explore-report",
+          "annotations",
+          "users-api-keys"
         ]
       }
     ]
@@ -36,11 +42,15 @@
       },
       {
         "label": "Support",
-        "href": "mailto:support@staminads.com"
+        "href": "mailto:hello@staminads.com"
       },
       {
-        "label": "Sign in",
-        "href": "https://console.staminads.com"
+        "label": "Report issue",
+        "href": "https://github.com/staminads/staminads/issues"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/staminads/staminads"
       }
     ]
   },
