@@ -1,0 +1,123 @@
+---
+title: 'Users & API Keys'
+description: 'Manage team access and API credentials for your workspace'
+sidebarTitle: 'Users & API Keys'
+icon: 'user-lock'
+iconType: 'duotone'
+---
+
+Control who has access to your workspace and manage API keys for programmatic access to your data.
+
+## Team Members
+
+Invite team members to collaborate on your workspace. Each member is assigned a role that determines their permissions.
+
+<Frame>
+  <img
+    style={{ borderRadius: '0.5rem' }}
+    src="/images/team.png"
+    alt="Team members list"
+  />
+</Frame>
+
+### Roles
+
+| Role | Description |
+|------|-------------|
+| **Owner** | Full control including billing and workspace deletion. Cannot be assigned via invitation. |
+| **Admin** | Manage members, settings, filters, and view all analytics |
+| **Editor** | Create and edit filters, annotations, and view analytics |
+| **Viewer** | Read-only access to reports and analytics |
+
+### Inviting Members
+
+1. Navigate to **Settings > Team**
+2. Click **Invite Member**
+3. Enter the email address and select a role
+4. The invitee receives an email with a link to join
+
+<Frame>
+  <img
+    style={{ borderRadius: '0.5rem' }}
+    src="/images/invite_user.png"
+    alt="Invite member form"
+  />
+</Frame>
+
+Invitations expire after 7 days. You can resend or revoke pending invitations from the Team settings page.
+
+## API Keys
+
+API keys allow programmatic access to Staminads for sending events, querying analytics, and managing workspace configuration.
+
+<Frame>
+  <img
+    style={{ borderRadius: '0.5rem' }}
+    src="/images/api_key_form.png"
+    alt="API keys management"
+  />
+</Frame>
+
+### Creating an API Key
+
+1. Navigate to **Settings > API Keys**
+2. Click **Create API Key**
+3. Enter a name and optional description
+4. Select the appropriate role (determines scopes)
+5. Optionally set an expiration date
+6. Copy the key immediately — it won't be shown again
+
+<Warning>
+API keys are only displayed once at creation. Store them securely. If you lose a key, you'll need to create a new one.
+</Warning>
+
+### API Key Roles
+
+| Role | Description | Use Case |
+|------|-------------|----------|
+| **Admin** | Full API access | Backend integrations, automation |
+| **Editor** | Track events and manage analytics | SDK integration, data pipelines |
+| **Viewer** | Read-only analytics access | Dashboards, reporting tools |
+
+### Scopes
+
+Each role grants a specific set of scopes:
+
+| Scope | Description | Admin | Editor | Viewer |
+|-------|-------------|:-----:|:------:|:------:|
+| `events.track` | Send session and event data via SDK | ✓ | ✓ | |
+| `analytics.view` | Query analytics data | ✓ | ✓ | ✓ |
+| `analytics.export` | Export analytics data | ✓ | ✓ | |
+| `workspace.read` | Read workspace configuration | ✓ | | ✓ |
+| `filters.manage` | Create and manage filters | ✓ | ✓ | |
+| `annotations.manage` | Create and manage annotations | ✓ | ✓ | |
+
+### Key Status
+
+| Status | Description |
+|--------|-------------|
+| **Active** | Key is valid and can be used |
+| **Expired** | Key has passed its expiration date |
+| **Revoked** | Key was manually disabled |
+
+### Revoking Keys
+
+To revoke an API key:
+
+1. Navigate to **Settings > API Keys**
+2. Find the key and click **Revoke**
+3. Confirm the action
+
+Revoked keys are immediately invalidated and cannot be restored.
+
+<Tip>
+Create separate API keys for different environments (development, staging, production) and integrations. This makes it easy to rotate keys without affecting other systems.
+</Tip>
+
+## Security Best Practices
+
+- **Use the minimum required role** — Don't use Admin keys when Viewer access is sufficient
+- **Set expiration dates** — For temporary integrations, set keys to expire automatically
+- **Rotate keys regularly** — Periodically create new keys and revoke old ones
+- **Never commit keys to version control** — Use environment variables or secret managers
+- **Monitor usage** — Check `last_used_at` to identify unused keys that should be revoked

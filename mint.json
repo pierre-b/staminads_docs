@@ -22,11 +22,15 @@
     },
     {
       "name": "Support",
-      "url": "mailto:support@staminads.com"
+      "url": "mailto:hello@staminads.com"
     },
     {
-      "name": "Sign in",
-      "url": "https://console.staminads.com"
+      "name": "Report issue",
+      "url": "https://github.com/staminads/staminads/issues"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/staminads/staminads"
     }
   ],
   "tabs": [],
@@ -34,12 +38,10 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["introduction", "setup", "channels-mapping", "reports"]
+      "pages": ["introduction", "installation", "web-sdk", "traffic-categorization", "metrics-dimensions", "dashboard", "goals", "explore-report", "annotations", "users-api-keys"]
     }
   ],
-  "footerSocials": {
-    "linkedin": "https://linkedin.com/company/staminads"
-  },
+  "footerSocials": {},
   "modeToggle": {
     "default": "light",
     "isHidden": true

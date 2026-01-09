@@ -1,0 +1,312 @@
+---
+title: 'Web SDK'
+description: 'Track sessions, events, and engagement on your website'
+sidebarTitle: 'Web SDK'
+icon: 'code'
+iconType: 'duotone'
+---
+
+The Staminads Web SDK captures session data, tracks engagement, and sends events to your workspace. It's lightweight (~18KB gzipped), privacy-focused, and works across all modern browsers.
+
+## Installation
+
+Add the configuration and script to your HTML:
+
+```html
+<script>
+window.StaminadsConfig = {
+  workspace_id: 'ws_your_workspace_id',
+  endpoint: 'https://your-staminads-server.com'
+};
+</script>
+<script async src="https://your-staminads-server.com/sdk/staminads.min.js"></script>
+```
+
+<Tip>
+Place the config script in the `<head>` and the SDK script before the closing `</body>` tag for optimal performance.
+</Tip>
+
+## Configuration
+
+Set `window.StaminadsConfig` **before** loading the SDK:
+
+```javascript
+window.StaminadsConfig = {
+  // Required
+  workspace_id: 'ws_your_workspace_id',
+  endpoint: 'https://your-staminads-server.com',
+
+  // Optional
+  debug: false,                    // Enable console logging
+  sessionTimeout: 30 * 60 * 1000,  // 30 minutes (default)
+
+  // Features
+  trackSPA: true,                  // Auto-track SPA navigation
+  trackScroll: true,               // Track scroll depth
+};
+```
+
+### Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `workspace_id` | string | *required* | Your workspace identifier |
+| `endpoint` | string | *required* | API endpoint URL |
+| `debug` | boolean | `false` | Enable debug logging |
+| `sessionTimeout` | number | `1800000` | Session timeout in ms (30 min) |
+| `trackSPA` | boolean | `true` | Auto-track single page app navigation |
+| `trackScroll` | boolean | `true` | Track scroll depth milestones |
+| `crossDomains` | string[] | `[]` | Domains to share sessions with |
+| `crossDomainExpiry` | number | `120` | Cross-domain link expiry in seconds |
+| `crossDomainStripParams` | boolean | `true` | Remove `_stm` param from URL after reading |
+
+### Cross-Domain Tracking
+
+By default, sessions are isolated per domain. When a visitor navigates from `blog.example.com` to `shop.example.com`, the SDK would create a **new session** on the shop domain — losing the connection to the original visit.
+
+Cross-domain tracking solves this by sharing session identity across domains, so you get:
+- **Accurate session counts** — One visitor journey = one session, not multiple
+- **Complete user paths** — See the full journey from blog article to checkout
+- **Correct attribution** — UTM parameters and referrer data stay with the session
+
+```javascript
+window.StaminadsConfig = {
+  workspace_id: 'ws_your_workspace_id',
+  endpoint: 'https://your-staminads-server.com',
+
+  // List all domains that should share sessions
+  crossDomains: ['shop.example.com', 'blog.example.com'],
+  crossDomainExpiry: 120,        // Link valid for 2 minutes (default)
+  crossDomainStripParams: true   // Remove _stm param after reading (default)
+};
+```
+
+<Warning>
+All domains must use the **same workspace_id** and have the SDK installed with the same `crossDomains` configuration.
+</Warning>
+
+#### How It Works
+
+1. When a user clicks a link to a configured domain, the SDK appends a `_stm` parameter with encrypted session data
+2. On the target domain, the SDK reads the parameter and continues the same session
+3. The parameter is stripped from the URL automatically (if `crossDomainStripParams: true`)
+
+#### Manual URL Decoration
+
+For programmatic navigation, use `decorateUrl()`:
+
+```javascript
+// Decorate a URL with session data
+const decoratedUrl = Staminads.decorateUrl('https://shop.example.com/checkout');
+// Returns: https://shop.example.com/checkout?_stm=eyJzIjoi...
+
+// Use with programmatic navigation
+window.location.href = decoratedUrl;
+```
+
+<Note>
+Cross-domain linking only works for domains in the `crossDomains` array. Links to other domains are not decorated.
+</Note>
+
+## API Reference
+
+### Session Information
+
+```javascript
+// Get current session ID
+const sessionId = await Staminads.getSessionId();
+
+// Get persistent visitor ID
+const visitorId = await Staminads.getVisitorId();
+
+// Get active engagement time (milliseconds)
+const focusDuration = await Staminads.getFocusDuration();
+
+// Get total time since session start (milliseconds)
+const totalDuration = await Staminads.getTotalDuration();
+
+// Get current config
+const config = Staminads.getConfig();
+```
+
+### Page Views
+
+Page views are tracked automatically, but you can trigger them manually for SPAs:
+
+```javascript
+// Track current page
+await Staminads.trackPageView();
+
+// Track specific URL
+await Staminads.trackPageView('/custom/path');
+```
+
+### Goals
+
+Track conversions and goals with optional value:
+
+```javascript
+// Simple goal
+await Staminads.trackGoal({
+  action: 'purchase'
+});
+
+// Goal with value
+await Staminads.trackGoal({
+  action: 'purchase',
+  id: 'order-456',
+  value: 99.99,
+  currency: 'USD',
+  properties: {
+    plan: 'premium'
+  }
+});
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `action` | string | Yes | Goal name/action |
+| `id` | string | No | Unique goal identifier |
+| `value` | number | No | Monetary value |
+| `currency` | string | No | Currency code (USD, EUR, etc.) |
+| `properties` | object | No | Custom key-value pairs |
+
+### Custom Dimensions
+
+Set custom dimensions (1-10) for advanced segmentation. There are two ways to set dimensions:
+
+#### Via URL Parameters (Automatic)
+
+Custom dimensions can be set via URL parameters `stm_1` through `stm_10`. They are automatically captured when the SDK initializes:
+
+```
+https://example.com/page?stm_1=campaign_a&stm_2=variant_b&stm_3=source_x
+```
+
+This is useful for:
+- Campaign tracking links
+- A/B test variant assignment
+- Affiliate tracking
+- Any scenario where you want to pass dimension values via URL
+
+<Note>
+**Priority rule**: Existing dimension values take priority over URL parameters. If a dimension is already set (e.g., from a previous page in the session), the URL parameter will NOT overwrite it.
+</Note>
+
+#### Via JavaScript (Programmatic)
+
+```javascript
+// Set single dimension
+await Staminads.setDimension(1, 'premium');
+await Staminads.setDimension(2, 'returning');
+
+// Set multiple dimensions
+await Staminads.setDimensions({
+  1: 'premium',
+  2: 'returning',
+  3: 'mobile-app'
+});
+
+// Get dimension value
+const value = await Staminads.getDimension(1);
+
+// Clear all dimensions
+await Staminads.clearDimensions();
+```
+
+<Tip>
+Custom dimensions are sent as `stm_1` through `stm_10` in events. Label them in **Workspace Settings > Custom Dimensions** for readable reports.
+</Tip>
+
+### Control Methods
+
+```javascript
+// Pause tracking (e.g., for cookie consent)
+await Staminads.pause();
+
+// Resume tracking
+await Staminads.resume();
+
+// Reset session (start fresh)
+await Staminads.reset();
+```
+
+### Debugging
+
+```javascript
+// Get debug information
+const debug = Staminads.debug();
+
+console.log(debug);
+// {
+//   session: { id: '...', visitor_id: '...', ... },
+//   config: { workspace_id: '...', ... },
+//   focusState: 'FOCUSED',
+//   isTracking: true,
+//   queueLength: 0
+// }
+```
+
+## Automatic Tracking
+
+The SDK automatically tracks the following without any code:
+
+| Event | Trigger | Data Captured |
+|-------|---------|---------------|
+| **screen_view** | Page load, SPA navigation | Path, referrer, UTM params, previous page |
+| **ping** | Heartbeat (10-30s intervals) | Duration, scroll depth |
+| **scroll** | 25%, 50%, 75%, 100% milestones | Max scroll percentage |
+
+### UTM Parameters
+
+UTM parameters are automatically captured from URLs:
+
+| Parameter | Description |
+|-----------|-------------|
+| `utm_source` | Traffic source (google, facebook) |
+| `utm_medium` | Marketing medium (cpc, email) |
+| `utm_campaign` | Campaign name |
+| `utm_term` | Paid search keywords |
+| `utm_content` | Ad variation |
+
+### Ad Click IDs
+
+The SDK automatically detects and captures ad network click IDs:
+
+| Parameter | Network |
+|-----------|---------|
+| `gclid` | Google Ads |
+| `gbraid`, `wbraid` | Google Ads (iOS) |
+| `fbclid` | Meta (Facebook, Instagram) |
+| `msclkid` | Microsoft Ads |
+| `ttclid` | TikTok Ads |
+| `li_fat_id` | LinkedIn Ads |
+| `twclid` | Twitter/X Ads |
+| `dclid` | Google Display & Video 360 |
+
+## Focus State Tracking
+
+The SDK tracks engagement using a focus state machine:
+
+| State | Description |
+|-------|-------------|
+| **FOCUSED** | Tab is visible and active |
+| **BLURRED** | Tab is visible but not focused |
+| **HIDDEN** | Tab is hidden or minimized |
+
+Only **FOCUSED** time counts toward engagement duration, giving you accurate TimeScore calculations.
+
+## Offline Support
+
+Events are queued when offline and sent when connectivity returns:
+
+- Queue holds up to 50 events
+- Events expire after 24 hours
+- Uses Beacon API with Fetch fallback
+- Handles Safari Private Mode gracefully
+
+## Privacy & Compliance
+
+- **No cookies** — Uses localStorage with memory fallback
+- **No PII** — Does not collect personal identifiable information
+- **Bot filtering** — Automatically excludes crawlers and bots

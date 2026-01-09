@@ -1,0 +1,262 @@
+---
+title: Metrics & Dimensions
+description: 'Complete reference for all metrics and dimensions available in Staminads'
+sidebarTitle: 'Metrics & Dimensions'
+icon: "cube"
+iconType: "duotone"
+---
+
+Staminads collects data into two tables, each with its own set of metrics and dimensions.
+
+<CardGroup cols={2}>
+  <Card title="Sessions" icon="users">
+    Session-level aggregated data. One row per visitor session. Use for traffic analysis, channel comparison, and engagement metrics.
+  </Card>
+  <Card title="Pages" icon="file">
+    Per-page view data with duration tracking. One row per page viewed. Use for content performance and exit analysis.
+  </Card>
+</CardGroup>
+
+---
+
+## Metrics
+
+### Session Metrics
+
+| Metric | Description | Example |
+|--------|-------------|---------|
+| `sessions` | Total number of sessions | `1,234` |
+| `median_duration` | Median session duration in seconds (**TimeScore**) | `38.0` |
+| `avg_duration` | Average session duration in seconds | `45.3` |
+| `bounce_rate` | Percentage of sessions under bounce threshold | `34.56%` |
+| `pageviews` | Total pageviews across all sessions | `3,456` |
+| `pages_per_session` | Average pages viewed per session | `2.81` |
+| `median_scroll` | Median max scroll depth percentage | `72.0%` |
+| `max_scroll` | Average max scroll depth percentage | `67.2%` |
+| `median_page_duration` | Session-weighted median time on page (seconds) | `23.0` |
+
+<AccordionGroup>
+  <Accordion title="About TimeScore (median_duration)">
+    The primary engagement metric in Staminads. Represents the median time users spend actively engaged in a session.
+
+    **Why median?** Medians are resistant to outliers. A single visitor leaving a tab open for hours won't skew your data.
+
+    **Example:** If sessions have durations `[10, 20, 30, 120, 300]`, the median is `30s` (not `96s` average).
+  </Accordion>
+  <Accordion title="About Bounce Rate">
+    Sessions shorter than the bounce threshold (default: 10 seconds) are considered "bounces."
+
+    The threshold is configurable in workspace settings. Lower bounce rate is generally better.
+  </Accordion>
+  <Accordion title="About median_page_duration">
+    **Session-weighted**: Each session contributes equally regardless of page count.
+
+    Useful for comparing engagement quality across traffic sources. Different from `page_duration` (pages table) which is page-weighted.
+  </Accordion>
+</AccordionGroup>
+
+### Page Metrics
+
+| Metric | Description | Example |
+|--------|-------------|---------|
+| `page_count` | Total page views | `5,678` |
+| `unique_pages` | Number of unique page paths | `42` |
+| `page_duration` | Median time on page in seconds | `28.0` |
+| `page_scroll` | Median scroll depth percentage | `65.0%` |
+| `landing_page_count` | Number of landing page views | `1,234` |
+| `exit_page_count` | Number of exit page views | `1,234` |
+| `exit_rate` | Percentage of views that are exits | `45.67%` |
+
+<Tip>
+**Exit rate context matters:**
+- High exit rate on checkout page = problem
+- High exit rate on "thank you" page = expected
+</Tip>
+
+---
+
+## Dimensions
+
+### Traffic Source
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `referrer` | Full referrer URL | `https://google.com/search?q=...` |
+| `referrer_domain` | Referrer domain only | `google.com`, `facebook.com` |
+| `referrer_path` | Referrer URL path | `/search`, `/posts/123` |
+| `is_direct` | Whether traffic is direct (no referrer) | `true`, `false` |
+
+### UTM Parameters
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `utm_source` | Traffic source | `google`, `newsletter`, `facebook` |
+| `utm_medium` | Marketing medium | `cpc`, `email`, `social`, `organic` |
+| `utm_campaign` | Campaign name | `summer_sale`, `product_launch` |
+| `utm_term` | Paid search keywords | `running shoes`, `analytics tool` |
+| `utm_content` | Ad content identifier | `banner_v1`, `text_link` |
+| `utm_id` | Ad network click ID value | `Cj0KCAiAxea5...`, `fb.1.123...` |
+| `utm_id_from` | Origin of the click ID | `gclid`, `gbraid`, `wbraid`, `fbclid`, `msclkid` |
+
+<Tip>
+`utm_id_from` is useful for identifying paid traffic from specific ad networks. See [Traffic Categorization](/traffic-categorization#ad-network-click-identifiers) for the full list of supported click IDs.
+</Tip>
+
+### Channel
+
+Channels are set via [Traffic Categorization](/traffic-categorization) filters.
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `channel` | Traffic channel | `Organic Search`, `Paid Search`, `Direct` |
+| `channel_group` | Channel grouping | `Search`, `Social`, `Referral`, `Direct` |
+
+**Common channel values:**
+- `Direct` — No referrer, typed URL
+- `Organic Search` — Google, Bing, etc. without ads
+- `Paid Search` — Google Ads, Bing Ads
+- `Social` — Facebook, Twitter, LinkedIn, etc.
+- `Referral` — Links from other websites
+- `Email` — Email campaigns
+- `Display` — Display advertising
+
+### Landing & Exit Pages
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `landing_page` | Full landing page URL | `https://example.com/products` |
+| `landing_domain` | Landing page domain | `example.com` |
+| `landing_path` | Landing page path | `/`, `/products`, `/blog/post-1` |
+| `exit_path` | Last page path in session | `/checkout`, `/thank-you` |
+
+### Page (Pages Table)
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `page_path` | Page URL path | `/`, `/products`, `/about` |
+| `is_landing_page` | Whether this was the entry page | `true`, `false` |
+| `is_exit_page` | Whether this was the exit page | `true`, `false` |
+| `page_entry_type` | How user arrived at page | `landing`, `navigation` |
+
+### Device
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `device` | Device category | `desktop`, `mobile`, `tablet` |
+| `browser` | Browser name | `Chrome`, `Safari`, `Firefox`, `Edge` |
+| `browser_type` | Browser engine type | `chromium`, `webkit`, `gecko` |
+| `os` | Operating system | `Windows`, `macOS`, `iOS`, `Android`, `Linux` |
+| `screen_width` | Screen width in pixels | `1920`, `1440`, `375` |
+| `screen_height` | Screen height in pixels | `1080`, `900`, `812` |
+| `viewport_width` | Browser viewport width | `1920`, `1200`, `375` |
+| `viewport_height` | Browser viewport height | `969`, `800`, `667` |
+| `connection_type` | Network connection type | `4g`, `3g`, `wifi`, `slow-2g` |
+
+### Geographic
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `country` | Country code (ISO 3166-1 alpha-2) | `US`, `GB`, `FR`, `DE`, `JP` |
+| `region` | Region/state | `California`, `England`, `Île-de-France` |
+| `city` | City name | `San Francisco`, `London`, `Paris` |
+| `latitude` | Latitude coordinate | `37.7749`, `51.5074` |
+| `longitude` | Longitude coordinate | `-122.4194`, `-0.1278` |
+| `language` | Browser language | `en-US`, `fr-FR`, `de-DE`, `ja-JP` |
+| `timezone` | User timezone | `America/Los_Angeles`, `Europe/London` |
+
+### Time
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `year` | Year of session | `2024`, `2025`, `2026` |
+| `month` | Month (1-12) | `1`, `6`, `12` |
+| `day` | Day of month (1-31) | `1`, `15`, `31` |
+| `day_of_week` | Day of week (1=Monday, 7=Sunday) | `1`, `5`, `7` |
+| `week_number` | ISO week number (1-53) | `1`, `26`, `52` |
+| `hour` | Hour of day (0-23) | `0`, `12`, `23` |
+| `is_weekend` | Whether session was on weekend | `true`, `false` |
+
+### Session
+
+| Dimension | Description | Example Values |
+|-----------|-------------|----------------|
+| `duration` | Session duration in seconds | `0`, `30`, `120`, `600` |
+| `pageview_count` | Pages viewed in session | `1`, `3`, `10` |
+
+### Custom Dimensions
+
+10 custom dimension slots are available for your own data. Set via filters or the SDK.
+
+| Dimension | Description |
+|-----------|-------------|
+| `stm_1` | Custom dimension 1 |
+| `stm_2` | Custom dimension 2 |
+| `stm_3` | Custom dimension 3 |
+| `stm_4` | Custom dimension 4 |
+| `stm_5` | Custom dimension 5 |
+| `stm_6` | Custom dimension 6 |
+| `stm_7` | Custom dimension 7 |
+| `stm_8` | Custom dimension 8 |
+| `stm_9` | Custom dimension 9 |
+| `stm_10` | Custom dimension 10 |
+
+**Setting via SDK:**
+```javascript
+staminads.setDimension(1, 'premium');      // stm_1 = 'premium'
+staminads.setDimension(2, 'logged_in');    // stm_2 = 'logged_in'
+```
+
+**Setting via Filters:** See [Traffic Categorization](/traffic-categorization) for rule-based dimension assignment.
+
+---
+
+## Quick Reference
+
+### Which metric for which question?
+
+| Question | Metrics | Table |
+|----------|---------|-------|
+| How many visitors? | `sessions` | sessions |
+| How engaged are users? | `median_duration`, `median_scroll` | sessions |
+| Are users bouncing? | `bounce_rate` | sessions |
+| Which pages perform best? | `page_duration`, `page_scroll` | pages |
+| Where do users exit? | `exit_rate`, `exit_page_count` | pages |
+| Traffic source quality? | `median_page_duration`, `pages_per_session` | sessions |
+| Content depth? | `pages_per_session`, `max_scroll` | sessions |
+
+---
+
+## Metrics We Don't Support
+
+Staminads is built on a fundamental principle: **we won't show you data we can't measure accurately**. Some metrics that other analytics tools display are technically impossible to track reliably in a cookieless, privacy-first world. Rather than showing you misleading numbers, we don't include them at all.
+
+<AccordionGroup>
+  <Accordion title="Users / Unique Visitors" icon="user-slash">
+    **Why we don't support it:** Counting unique users requires identifying the same person across multiple sessions. Without cookies or persistent identifiers, this is technically impossible.
+
+    A person visiting from their phone, then their laptop, then their work computer appears as three separate visitors. There's no privacy-respecting way to link these sessions.
+
+    **What to use instead:** `sessions` — the number of sessions is accurate and meaningful. Focus on session quality (TimeScore) rather than trying to count people you can't identify.
+  </Accordion>
+  <Accordion title="Returning Visitors" icon="arrow-rotate-left">
+    **Why we don't support it:** Identifying returning visitors requires recognizing someone who visited before. Without cookies, we can't know if a session is from a new or returning visitor.
+
+    **What to use instead:** Focus on engagement metrics. A highly engaged session (high TimeScore) often indicates familiarity with your content, regardless of whether we can technically label it as "returning."
+  </Accordion>
+  <Accordion title="ROAS / ROI / Conversion Attribution" icon="money-bill-trend-up">
+    **Why we don't support it:** Return on Ad Spend requires tracking conversions back to the ad click that caused them. This is broken for multiple reasons:
+
+    - **Cross-device journeys** — Someone clicks an ad on mobile, converts on desktop
+    - **Multi-touch attribution** — Multiple channels contribute to a conversion
+    - **Cookie restrictions** — Safari limits cookies to 7 days, adblockers delete them
+    - **Consent requirements** — Users who decline tracking can't be attributed
+
+    Your ROAS numbers in other tools are incomplete — they only count conversions they can track, which is a shrinking percentage of actual conversions.
+
+    **What to use instead:** TimeScore and engagement metrics. Measure whether your ads bring engaged visitors. Engagement is measurable on every session, not just the ones that happen to convert within a trackable window.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+This isn't a limitation of Staminads — it's a limitation of the modern web. Any tool claiming to accurately count unique users or attribute conversions without cookies is either using fingerprinting (privacy-invasive) or showing you incomplete data. We choose transparency over false precision.
+</Note>

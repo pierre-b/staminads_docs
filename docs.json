@@ -1,0 +1,50 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Staminads Documentation",
+  "colors": {
+    "primary": "#7763F1",
+    "light": "#8B63F1"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "setup",
+          "channels-mapping",
+          "reports"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/logo.svg",
+    "dark": "/logo/logo.svg"
+  },
+  "appearance": {
+    "default": "light",
+    "strict": true
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Home",
+        "href": "https://www.staminads.com/"
+      },
+      {
+        "label": "Support",
+        "href": "mailto:support@staminads.com"
+      },
+      {
+        "label": "Sign in",
+        "href": "https://console.staminads.com"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {}
+  }
+}
