@@ -8,21 +8,30 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "groups": [
+    "tabs": [
       {
-        "group": "Get Started",
-        "pages": [
-          "introduction",
-          "installation",
-          "web-sdk",
-          "traffic-categorization",
-          "metrics-dimensions",
-          "dashboard",
-          "goals",
-          "explore-report",
-          "annotations",
-          "users-api-keys"
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "web-sdk",
+              "traffic-categorization",
+              "metrics-dimensions",
+              "dashboard",
+              "goals",
+              "explore-report",
+              "annotations",
+              "users-api-keys"
+            ]
+          }
         ]
+      },
+      {
+        "tab": "API Reference",
+        "openapi": "/openapi.yaml"
       }
     ]
   },

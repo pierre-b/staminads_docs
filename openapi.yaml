@@ -1,0 +1,2572 @@
+openapi: 3.0.0
+paths:
+  /api/setup.status:
+    get:
+      operationId: SetupController_status
+      parameters: []
+      responses:
+        "200":
+          description: Setup status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  setupCompleted:
+                    type: boolean
+      security:
+        - {}
+      summary: Check if initial setup is complete
+      tags: &a1
+        - setup
+  /api/setup.initialize:
+    post:
+      operationId: SetupController_initialize
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitializeDto"
+      responses:
+        "201":
+          description: Admin user created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      is_super_admin:
+                        type: boolean
+        "400":
+          description: Setup already completed or user already exists
+      security:
+        - {}
+      summary: Initialize the application with the first admin user
+      tags: *a1
+  /api/auth.me:
+    get:
+      operationId: UsersController_me
+      parameters: []
+      responses:
+        "200":
+          description: Current user profile
+      security: &a2
+        - jwt-auth: []
+      summary: Get current user profile
+      tags: &a3
+        - auth
+  /api/auth.updateProfile:
+    post:
+      operationId: UsersController_updateProfile
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileDto"
+      responses:
+        "201":
+          description: Updated user profile
+      security: *a2
+      summary: Update current user profile
+      tags: *a3
+  /api/auth.changePassword:
+    post:
+      operationId: UsersController_changePassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordDto"
+      responses:
+        "201":
+          description: Password changed successfully
+      security: *a2
+      summary: Change current user password
+      tags: *a3
+  /api/auth.login:
+    post:
+      operationId: AuthController_login
+      parameters:
+        - name: x-forwarded-for
+          required: true
+          in: header
+          schema:
+            type: string
+        - name: user-agent
+          required: true
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "201":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+        "401":
+          description: Invalid credentials
+      security:
+        - {}
+      summary: Login with email and password
+      tags: &a4
+        - auth
+  /api/auth.forgotPassword:
+    post:
+      operationId: AuthController_forgotPassword
+      parameters:
+        - name: x-forwarded-for
+          required: true
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDto"
+      responses:
+        "201":
+          description: Reset email sent (if email exists)
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+      security:
+        - {}
+      summary: Request password reset email
+      tags: *a4
+  /api/auth.resetPassword:
+    post:
+      operationId: AuthController_resetPassword
+      parameters:
+        - name: x-forwarded-for
+          required: true
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+      responses:
+        "200":
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Invalid or expired token
+      security:
+        - {}
+      summary: Reset password with token
+      tags: *a4
+  /api/auth.sessions:
+    get:
+      operationId: AuthController_sessions
+      parameters: []
+      responses:
+        "200":
+          description: List of active sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    user_id:
+                      type: string
+                    ip_address:
+                      type: string
+                      nullable: true
+                    user_agent:
+                      type: string
+                      nullable: true
+                    expires_at:
+                      type: string
+                    revoked_at:
+                      type: string
+                      nullable: true
+                    created_at:
+                      type: string
+                    updated_at:
+                      type: string
+      security:
+        - jwt-auth: []
+      summary: List active sessions
+      tags: *a4
+  /api/auth.revokeSession:
+    post:
+      operationId: AuthController_revokeSession
+      parameters:
+        - name: sessionId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session revoked
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+      security:
+        - jwt-auth: []
+      summary: Revoke a specific session
+      tags: *a4
+  /api/auth.revokeAllSessions:
+    post:
+      operationId: AuthController_revokeAllSessions
+      parameters: []
+      responses:
+        "200":
+          description: All sessions revoked
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+      security:
+        - jwt-auth: []
+      summary: Logout from all devices
+      tags: *a4
+  /api/smtp.info:
+    get:
+      operationId: SmtpController_info
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SMTP info (status + settings)
+      security: &a5
+        - jwt-auth: []
+      summary: Get SMTP status and settings
+      tags: &a6
+        - smtp
+  /api/smtp.update:
+    post:
+      operationId: SmtpController_update
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSmtpDto"
+      responses:
+        "200":
+          description: Updated SMTP settings
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmtpSettingsDto"
+      security: *a5
+      summary: Update SMTP settings (owner only)
+      tags: *a6
+  /api/smtp.delete:
+    post:
+      operationId: SmtpController_delete
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteSmtpDto"
+      responses:
+        "200":
+          description: SMTP settings removed
+        "201":
+          description: ""
+      security: *a5
+      summary: Remove workspace SMTP (fall back to global)
+      tags: *a6
+  /api/smtp.test:
+    post:
+      operationId: SmtpController_test
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestSmtpDto"
+      responses:
+        "200":
+          description: Test email sent
+        "201":
+          description: ""
+      security: *a5
+      summary: Send test email
+      tags: *a6
+  /api/workspaces.list:
+    get:
+      operationId: WorkspacesController_list
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security: &a7
+        - jwt-auth: []
+      summary: List workspaces for current user
+      tags: &a8
+        - workspaces
+  /api/workspaces.get:
+    get:
+      operationId: WorkspacesController_get
+      parameters:
+        - name: id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a7
+      summary: Get workspace by ID
+      tags: *a8
+  /api/workspaces.create:
+    post:
+      operationId: WorkspacesController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkspaceDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a7
+      summary: Create a new workspace
+      tags: *a8
+  /api/workspaces.update:
+    post:
+      operationId: WorkspacesController_update
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkspaceDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a7
+      summary: Update an existing workspace
+      tags: *a8
+  /api/workspaces.delete:
+    post:
+      operationId: WorkspacesController_delete
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: ""
+      security: *a7
+      summary: Delete a workspace
+      tags: *a8
+  /api/members.list:
+    get:
+      operationId: MembersController_list
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of workspace members with user details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    workspace_id:
+                      type: string
+                    user_id:
+                      type: string
+                    role:
+                      type: string
+                      enum:
+                        - owner
+                        - admin
+                        - editor
+                        - viewer
+                    invited_by:
+                      type: string
+                      nullable: true
+                    joined_at:
+                      type: string
+                    created_at:
+                      type: string
+                    updated_at:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        email:
+                          type: string
+                        name:
+                          type: string
+                        status:
+                          type: string
+      security: &a9
+        - jwt-auth: []
+      summary: List all members of a workspace
+      tags: &a10
+        - members
+  /api/members.get:
+    get:
+      operationId: MembersController_get
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Member details with user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  workspace_id:
+                    type: string
+                  user_id:
+                    type: string
+                  role:
+                    type: string
+                    enum:
+                      - owner
+                      - admin
+                      - editor
+                      - viewer
+                  invited_by:
+                    type: string
+                    nullable: true
+                  joined_at:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      status:
+                        type: string
+        "404":
+          description: Member not found
+      security: *a9
+      summary: Get a specific member by user ID
+      tags: *a10
+  /api/members.updateRole:
+    post:
+      operationId: MembersController_updateRole
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleDto"
+      responses:
+        "200":
+          description: Member role updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  workspace_id:
+                    type: string
+                  user_id:
+                    type: string
+                  role:
+                    type: string
+                    enum:
+                      - owner
+                      - admin
+                      - editor
+                      - viewer
+                  invited_by:
+                    type: string
+                    nullable: true
+                  joined_at:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      status:
+                        type: string
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Member not found
+      security: *a9
+      summary: Update a member's role
+      tags: *a10
+  /api/members.remove:
+    post:
+      operationId: MembersController_remove
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveMemberDto"
+      responses:
+        "200":
+          description: Member removed successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Member not found
+      security: *a9
+      summary: Remove a member from a workspace
+      tags: *a10
+  /api/members.leave:
+    post:
+      operationId: MembersController_leave
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspace_id:
+                  type: string
+              required:
+                - workspace_id
+      responses:
+        "200":
+          description: Successfully left workspace
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Cannot leave as last owner
+        "404":
+          description: Not a member of this workspace
+      security: *a9
+      summary: Leave a workspace voluntarily
+      tags: *a10
+  /api/members.transferOwnership:
+    post:
+      operationId: MembersController_transferOwnership
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferOwnershipDto"
+      responses:
+        "200":
+          description: Ownership transferred successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  old_owner:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      workspace_id:
+                        type: string
+                      user_id:
+                        type: string
+                      role:
+                        type: string
+                      invited_by:
+                        type: string
+                        nullable: true
+                      joined_at:
+                        type: string
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          email:
+                            type: string
+                          name:
+                            type: string
+                          status:
+                            type: string
+                  new_owner:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      workspace_id:
+                        type: string
+                      user_id:
+                        type: string
+                      role:
+                        type: string
+                      invited_by:
+                        type: string
+                        nullable: true
+                      joined_at:
+                        type: string
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          email:
+                            type: string
+                          name:
+                            type: string
+                          status:
+                            type: string
+        "201":
+          description: ""
+        "403":
+          description: Only owners can transfer ownership
+        "404":
+          description: New owner not a member of workspace
+      security: *a9
+      summary: Transfer workspace ownership to another member
+      tags: *a10
+  /api/apiKeys.create:
+    post:
+      operationId: ApiKeysController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApiKeyDto"
+      responses:
+        "201":
+          description: API key created successfully. Returns the full key (only once).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateApiKeyResponseDto"
+      security: &a11
+        - jwt-auth: []
+      summary: Create a new API key
+      tags: &a12
+        - api-keys
+  /api/apiKeys.list:
+    get:
+      operationId: ApiKeysController_list
+      parameters:
+        - name: user_id
+          required: false
+          in: query
+          description: Filter by user ID
+          schema:
+            type: string
+        - name: workspace_id
+          required: false
+          in: query
+          description: Filter by workspace ID
+          schema:
+            type: string
+        - name: status
+          required: false
+          in: query
+          description: Filter by status
+          schema:
+            enum:
+              - active
+              - revoked
+              - expired
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security: *a11
+      summary: List API keys with optional filters
+      tags: *a12
+  /api/apiKeys.get:
+    get:
+      operationId: ApiKeysController_get
+      parameters:
+        - name: id
+          required: true
+          in: query
+          description: API key ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a11
+      summary: Get API key by ID
+      tags: *a12
+  /api/apiKeys.revoke:
+    post:
+      operationId: ApiKeysController_revoke
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: API key ID to revoke
+                revoked_by:
+                  type: string
+                  description: User ID who is revoking the key
+              required:
+                - id
+                - revoked_by
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a11
+      summary: Revoke an API key
+      tags: *a12
+  /api/audit.list:
+    get:
+      operationId: AuditController_list
+      parameters:
+        - name: workspace_id
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: action
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: target_type
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security: &a13
+        - jwt-auth: []
+      summary: List audit logs with optional filters
+      tags: &a14
+        - audit
+  /api/audit.getByTarget:
+    get:
+      operationId: AuditController_getByTarget
+      parameters:
+        - name: target_id
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security: *a13
+      summary: Get audit logs for a specific target
+      tags: *a14
+  /api/invitations.list:
+    get:
+      operationId: InvitationsController_list
+      parameters:
+        - name: workspaceId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of pending invitations
+      security:
+        - jwt-auth: []
+      summary: List workspace invitations
+      tags: &a15
+        - invitations
+  /api/invitations.create:
+    post:
+      operationId: InvitationsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInvitationDto"
+      responses:
+        "201":
+          description: Invitation created and email sent
+      security:
+        - jwt-auth: []
+      summary: Send invitation email
+      tags: *a15
+  /api/invitations.resend:
+    post:
+      operationId: InvitationsController_resend
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationIdDto"
+      responses:
+        "200":
+          description: Invitation email resent
+      security:
+        - jwt-auth: []
+      summary: Resend invitation email
+      tags: *a15
+  /api/invitations.revoke:
+    post:
+      operationId: InvitationsController_revoke
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationIdDto"
+      responses:
+        "200":
+          description: Invitation revoked
+      security:
+        - jwt-auth: []
+      summary: Revoke pending invitation
+      tags: *a15
+  /api/invitations.get:
+    get:
+      operationId: InvitationsController_get
+      parameters:
+        - name: token
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation details
+      security:
+        - {}
+      summary: Get invitation details by token
+      tags: *a15
+  /api/invitations.accept:
+    post:
+      operationId: InvitationsController_accept
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AcceptInvitationDto"
+      responses:
+        "200":
+          description: Invitation accepted
+      security:
+        - {}
+      summary: Accept invitation
+      tags: *a15
+  /api/filters.list:
+    get:
+      operationId: FiltersController_list
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: Filter by tags
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: List of filters
+      security: &a16
+        - jwt-auth: []
+      summary: List filters for workspace
+      tags: &a17
+        - filters
+  /api/filters.get:
+    get:
+      operationId: FiltersController_get
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Filter definition
+      security: *a16
+      summary: Get filter by ID
+      tags: *a17
+  /api/filters.create:
+    post:
+      operationId: FiltersController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFilterDto"
+      responses:
+        "201":
+          description: Created filter
+      security: *a16
+      summary: Create filter
+      tags: *a17
+  /api/filters.update:
+    post:
+      operationId: FiltersController_update
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFilterDto"
+      responses:
+        "200":
+          description: Updated filter
+      security: *a16
+      summary: Update filter
+      tags: *a17
+  /api/filters.delete:
+    post:
+      operationId: FiltersController_delete
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillSuccessResponseDto"
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillSuccessResponseDto"
+      security: *a16
+      summary: Delete filter
+      tags: *a17
+  /api/filters.reorder:
+    post:
+      operationId: FiltersController_reorder
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderFiltersDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillSuccessResponseDto"
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillSuccessResponseDto"
+      security: *a16
+      summary: Reorder filters
+      tags: *a17
+  /api/filters.listTags:
+    get:
+      operationId: FiltersController_listTags
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of unique tags
+      security: *a16
+      summary: List unique tags across all filters
+      tags: *a17
+  /api/filters.backfillStart:
+    post:
+      operationId: FiltersController_backfillStart
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartBackfillDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillStartResponseDto"
+      security: *a16
+      summary: Start background backfill for all filters
+      tags: *a17
+  /api/filters.backfillStatus:
+    get:
+      operationId: FiltersController_backfillStatus
+      parameters:
+        - name: task_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task progress
+      security: *a16
+      summary: Get backfill task status
+      tags: *a17
+  /api/filters.backfillCancel:
+    post:
+      operationId: FiltersController_backfillCancel
+      parameters:
+        - name: task_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackfillSuccessResponseDto"
+      security: *a16
+      summary: Cancel running backfill task
+      tags: *a17
+  /api/filters.backfillList:
+    get:
+      operationId: FiltersController_backfillList
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of tasks
+      security: *a16
+      summary: List backfill tasks for workspace
+      tags: *a17
+  /api/filters.backfillSummary:
+    get:
+      operationId: FiltersController_backfillSummary
+      parameters:
+        - name: workspace_id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Backfill summary
+      security: *a16
+      summary: Get backfill status summary for workspace
+      tags: *a17
+  /api/tools.websiteMeta:
+    post:
+      operationId: ToolsController_websiteMeta
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebsiteMetaDto"
+      responses:
+        "200":
+          description: Website metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebsiteMetaResponse"
+        "400":
+          description: Failed to fetch metadata
+      security:
+        - {}
+      summary: Fetch website title and logo
+      tags: &a18
+        - tools
+  /api/tools.favicon:
+    get:
+      operationId: ToolsController_favicon
+      parameters:
+        - name: url
+          required: true
+          in: query
+          description: Website URL to fetch favicon for
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Favicon image binary
+      security:
+        - {}
+      summary: Fetch and proxy website favicon
+      tags: *a18
+  /api/demo.generate:
+    post:
+      operationId: DemoController_generate
+      parameters:
+        - name: secret
+          required: true
+          in: query
+          description: Demo secret from DEMO_SECRET environment variable
+          schema: {}
+      responses:
+        "201":
+          description: ""
+      security:
+        - demo-secret: []
+        - {}
+      summary: Generate demo fixtures (10k sessions)
+      tags: &a19
+        - demo
+  /api/demo.delete:
+    post:
+      operationId: DemoController_delete
+      parameters:
+        - name: secret
+          required: true
+          in: query
+          description: Demo secret from DEMO_SECRET environment variable
+          schema: {}
+      responses:
+        "200":
+          description: ""
+      security:
+        - demo-secret: []
+        - {}
+      summary: Delete demo workspace and sessions
+      tags: *a19
+  /api/track:
+    post:
+      description: Processes a session payload containing pageview and goal actions.
+        Actions are processed incrementally using checkpoint-based delta
+        sending. The server skips actions at indices <= checkpoint and processes
+        only new actions.
+      operationId: EventsController_track
+      parameters:
+        - name: origin
+          required: true
+          in: header
+          schema:
+            type: string
+        - name: referer
+          required: true
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionPayloadDto"
+      responses:
+        "200":
+          description: Session payload processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  checkpoint:
+                    type: number
+                    description: Index of the last processed action
+                    example: 5
+      summary: Track session with cumulative actions array
+      tags:
+        - events
+  /api/analytics.query:
+    post:
+      operationId: AnalyticsController_query
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyticsQueryDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: &a20
+        - jwt-auth: []
+      summary: Execute an analytics query
+      tags: &a21
+        - analytics
+  /api/analytics.extremes:
+    post:
+      operationId: AnalyticsController_extremes
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExtremesQueryDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a20
+      summary: Get min/max extremes of a metric across grouped data
+      tags: *a21
+  /api/analytics.metrics:
+    get:
+      operationId: AnalyticsController_getMetrics
+      parameters:
+        - name: table
+          required: false
+          in: query
+          description: Filter metrics by table (sessions or pages)
+          schema:
+            enum:
+              - sessions
+              - pages
+              - goals
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security: *a20
+      summary: Get available metrics
+      tags: *a21
+  /api/analytics.dimensions:
+    get:
+      operationId: AnalyticsController_getDimensions
+      parameters:
+        - name: table
+          required: false
+          in: query
+          description: Filter dimensions by table (sessions or pages)
+          schema:
+            enum:
+              - sessions
+              - pages
+              - goals
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      security: *a20
+      summary: Get available dimensions
+      tags: *a21
+  /api/analytics.tables:
+    get:
+      operationId: AnalyticsController_getTables
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      security: *a20
+      summary: Get available analytics tables
+      tags: *a21
+  /api/assistant.chat:
+    post:
+      description: Creates a new chat job and returns a job ID. Use the stream
+        endpoint to get results.
+      operationId: AssistantController_chat
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequestDto"
+      responses:
+        "200":
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                    description: Job ID for streaming
+      security: &a22
+        - jwt-auth: []
+      summary: Create an AI assistant chat job
+      tags: &a23
+        - assistant
+  /api/assistant.stream/{jobId}:
+    get:
+      description: Streams thinking text and tool calls, then emits final config.
+        Supports reconnection.
+      operationId: AssistantController_stream
+      parameters:
+        - name: jobId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      security: *a22
+      summary: Stream AI assistant results via SSE
+      tags: *a23
+info:
+  title: Staminads API
+  description: Web analytics platform for tracking TimeScore metrics
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    jwt-auth:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      name: JWT
+      description: Enter JWT token
+      in: header
+    demo-secret:
+      type: apiKey
+      in: query
+      name: secret
+      description: Demo secret for demo endpoints
+    api-key:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: "API key in format: sk_live_..."
+  schemas:
+    InitializeDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 8
+      required:
+        - email
+        - name
+        - password
+    UpdateProfileDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+    ChangePasswordDto:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 72
+      required:
+        - currentPassword
+        - newPassword
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+      required:
+        - email
+        - password
+    ForgotPasswordDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+    ResetPasswordDto:
+      type: object
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 72
+      required:
+        - token
+        - newPassword
+    UpdateSmtpDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        enabled:
+          type: boolean
+        host:
+          type: string
+          minLength: 1
+          maxLength: 255
+        port:
+          type: number
+          minimum: 1
+          maximum: 65535
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        from_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        from_email:
+          type: string
+          format: email
+      required:
+        - workspace_id
+        - enabled
+        - host
+        - port
+        - from_name
+        - from_email
+    SmtpSettingsDto:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        host:
+          type: string
+          minLength: 1
+          maxLength: 255
+        port:
+          type: number
+          minimum: 1
+          maximum: 65535
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        from_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        from_email:
+          type: string
+          format: email
+      required:
+        - enabled
+        - host
+        - port
+        - from_name
+        - from_email
+    DeleteSmtpDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+      required:
+        - workspace_id
+    TestSmtpDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        to_email:
+          type: string
+          format: email
+      required:
+        - workspace_id
+        - to_email
+    AnnotationDto:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        time:
+          type: string
+          pattern: /^([01]\d|2[0-3]):([0-5]\d)$/
+        timezone:
+          type: string
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        color:
+          type: string
+          pattern: /^#[0-9A-Fa-f]{6}$/
+      required:
+        - id
+        - date
+        - time
+        - timezone
+        - title
+    CreateWorkspaceSettingsDto:
+      type: object
+      properties:
+        timescore_reference:
+          type: number
+          minimum: 1
+        bounce_threshold:
+          type: number
+          minimum: 1
+        geo_enabled:
+          type: boolean
+        geo_store_city:
+          type: boolean
+        geo_store_region:
+          type: boolean
+        geo_coordinates_precision:
+          type: number
+          minimum: 0
+          maximum: 2
+        annotations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotationDto"
+    CreateWorkspaceDto:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 50
+          pattern: /^[a-z][a-z0-9_]*$/
+        name:
+          type: string
+        website:
+          type: string
+          format: uri
+        timezone:
+          type: string
+        currency:
+          type: string
+        logo_url:
+          type: string
+          format: uri
+        settings:
+          $ref: "#/components/schemas/CreateWorkspaceSettingsDto"
+      required:
+        - id
+        - name
+        - website
+        - timezone
+        - currency
+    SmtpSettingsUpdateDto:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        host:
+          type: string
+          maxLength: 255
+        port:
+          type: number
+          minimum: 1
+          maximum: 65535
+        username:
+          type: string
+          maxLength: 255
+        password_encrypted:
+          type: string
+          maxLength: 255
+        from_name:
+          type: string
+          maxLength: 100
+        from_email:
+          type: string
+          format: email
+      required:
+        - enabled
+        - host
+        - port
+        - from_name
+        - from_email
+    UpdateWorkspaceSettingsDto:
+      type: object
+      properties:
+        timescore_reference:
+          type: number
+          minimum: 1
+        bounce_threshold:
+          type: number
+          minimum: 1
+        custom_dimensions:
+          type: object
+        filters:
+          type: array
+          items:
+            type: object
+        integrations:
+          type: array
+          items:
+            type: object
+        geo_enabled:
+          type: boolean
+        geo_store_city:
+          type: boolean
+        geo_store_region:
+          type: boolean
+        geo_coordinates_precision:
+          type: number
+          minimum: 0
+          maximum: 2
+        annotations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotationDto"
+        smtp:
+          $ref: "#/components/schemas/SmtpSettingsUpdateDto"
+        allowed_domains:
+          type: array
+          items:
+            type: string
+            maxLength: 253
+            pattern: /^(\*\.)?([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
+    UpdateWorkspaceDto:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - initializing
+            - active
+            - inactive
+            - error
+        name:
+          type: string
+        website:
+          type: string
+          format: uri
+        timezone:
+          type: string
+        currency:
+          type: string
+        logo_url:
+          type: string
+          format: uri
+        settings:
+          $ref: "#/components/schemas/UpdateWorkspaceSettingsDto"
+      required:
+        - id
+    UpdateRoleDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        user_id:
+          type: string
+        role:
+          type: string
+          enum:
+            - owner
+            - admin
+            - editor
+            - viewer
+      required:
+        - workspace_id
+        - user_id
+        - role
+    RemoveMemberDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        user_id:
+          type: string
+      required:
+        - workspace_id
+        - user_id
+    TransferOwnershipDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        new_owner_id:
+          type: string
+      required:
+        - workspace_id
+        - new_owner_id
+    CreateApiKeyDto:
+      type: object
+      properties:
+        user_id:
+          type: string
+        workspace_id:
+          type: string
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        role:
+          type: string
+          enum:
+            - admin
+            - editor
+            - viewer
+        expires_at:
+          type: string
+          nullable: true
+      required:
+        - workspace_id
+        - name
+        - role
+    CreateApiKeyResponseDto:
+      type: object
+      properties:
+        key:
+          type: string
+          description: |-
+            The full API key. This is ONLY returned once and is not stored.
+            Format: stam_live_<64 hex chars>
+        apiKey:
+          type: object
+          description: Public API key metadata (without the key_hash)
+      required:
+        - key
+        - apiKey
+    CreateInvitationDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum:
+            - admin
+            - editor
+            - viewer
+      required:
+        - workspace_id
+        - email
+        - role
+    InvitationIdDto:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    AcceptInvitationDto:
+      type: object
+      properties:
+        token:
+          type: string
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
+      required:
+        - token
+    FilterConditionDto:
+      type: object
+      properties:
+        field:
+          type: string
+          enum:
+            - utm_source
+            - utm_medium
+            - utm_campaign
+            - utm_term
+            - utm_content
+            - utm_id
+            - utm_id_from
+            - referrer
+            - referrer_domain
+            - referrer_path
+            - is_direct
+            - landing_page
+            - landing_domain
+            - landing_path
+            - path
+            - device
+            - browser
+            - browser_type
+            - os
+            - user_agent
+            - connection_type
+            - language
+            - timezone
+        operator:
+          type: string
+          enum:
+            - equals
+            - not_equals
+            - contains
+            - not_contains
+            - is_empty
+            - is_not_empty
+            - regex
+        value:
+          type: string
+      required:
+        - field
+        - operator
+    FilterOperationDto:
+      type: object
+      properties:
+        dimension:
+          type: string
+          enum:
+            - channel
+            - channel_group
+            - stm_1
+            - stm_2
+            - stm_3
+            - stm_4
+            - stm_5
+            - stm_6
+            - stm_7
+            - stm_8
+            - stm_9
+            - stm_10
+            - utm_source
+            - utm_medium
+            - utm_campaign
+            - utm_term
+            - utm_content
+            - referrer_domain
+            - is_direct
+        action:
+          type: string
+          enum:
+            - set_value
+            - unset_value
+            - set_default_value
+        value:
+          type: string
+      required:
+        - dimension
+        - action
+    CreateFilterDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        name:
+          type: string
+        priority:
+          type: number
+          minimum: 0
+          maximum: 1000
+        tags:
+          type: array
+          items:
+            type: string
+        conditions:
+          minItems: 1
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterConditionDto"
+        operations:
+          minItems: 1
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterOperationDto"
+        enabled:
+          type: boolean
+      required:
+        - workspace_id
+        - name
+        - conditions
+        - operations
+    UpdateFilterDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        priority:
+          type: number
+          minimum: 0
+          maximum: 1000
+        order:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+        conditions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterConditionDto"
+        operations:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterOperationDto"
+        enabled:
+          type: boolean
+      required:
+        - workspace_id
+        - id
+    BackfillSuccessResponseDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+      required:
+        - success
+    ReorderFiltersDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        filter_ids:
+          minItems: 1
+          type: array
+          items:
+            type: string
+      required:
+        - workspace_id
+        - filter_ids
+    StartBackfillDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        lookback_days:
+          type: number
+          minimum: 1
+          maximum: 365
+        chunk_size_days:
+          type: number
+          minimum: 1
+          maximum: 30
+        batch_size:
+          type: number
+          minimum: 100
+          maximum: 50000
+      required:
+        - workspace_id
+        - lookback_days
+    BackfillStartResponseDto:
+      type: object
+      properties:
+        task_id:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+          description: The unique identifier for the backfill task
+      required:
+        - task_id
+    WebsiteMetaDto:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+      required:
+        - url
+    WebsiteMetaResponse:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Website title
+        logo_url:
+          type: string
+          description: Website logo URL
+    CurrentPageDto:
+      type: object
+      properties:
+        path:
+          type: string
+          maxLength: 2048
+        page_number:
+          type: number
+          minimum: 1
+        entered_at:
+          type: number
+        scroll:
+          type: number
+          minimum: 0
+          maximum: 100
+      required:
+        - path
+        - page_number
+        - entered_at
+        - scroll
+    SessionAttributesDto:
+      type: object
+      properties:
+        referrer:
+          type: string
+        landing_page:
+          type: string
+        utm_source:
+          type: string
+        utm_medium:
+          type: string
+        utm_campaign:
+          type: string
+        utm_term:
+          type: string
+        utm_content:
+          type: string
+        utm_id:
+          type: string
+        utm_id_from:
+          type: string
+        screen_width:
+          type: number
+        screen_height:
+          type: number
+        viewport_width:
+          type: number
+        viewport_height:
+          type: number
+        device:
+          type: string
+        browser:
+          type: string
+        browser_type:
+          type: string
+        os:
+          type: string
+        user_agent:
+          type: string
+        connection_type:
+          type: string
+        language:
+          type: string
+        timezone:
+          type: string
+      required:
+        - landing_page
+    SessionPayloadDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        session_id:
+          type: string
+        actions:
+          type: array
+          items:
+            type: object
+        current_page:
+          $ref: "#/components/schemas/CurrentPageDto"
+        checkpoint:
+          type: number
+          minimum: 0
+        attributes:
+          $ref: "#/components/schemas/SessionAttributesDto"
+        created_at:
+          type: number
+        updated_at:
+          type: number
+        sdk_version:
+          type: string
+        sent_at:
+          type: number
+      required:
+        - workspace_id
+        - session_id
+        - actions
+        - created_at
+        - updated_at
+    FilterDto:
+      type: object
+      properties:
+        dimension:
+          type: string
+        operator:
+          type: string
+          enum:
+            - equals
+            - notEquals
+            - in
+            - notIn
+            - contains
+            - notContains
+            - gt
+            - gte
+            - lt
+            - lte
+            - isNull
+            - isNotNull
+            - between
+            - isEmpty
+            - isNotEmpty
+        values:
+          type: array
+          items:
+            type: object
+      required:
+        - dimension
+        - operator
+    DateRangeDto:
+      type: object
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+        preset:
+          type: string
+          enum:
+            - previous_30_minutes
+            - today
+            - yesterday
+            - previous_7_days
+            - previous_14_days
+            - previous_28_days
+            - previous_30_days
+            - previous_90_days
+            - previous_91_days
+            - this_week
+            - previous_week
+            - this_month
+            - previous_month
+            - this_quarter
+            - previous_quarter
+            - this_year
+            - previous_year
+            - previous_12_months
+            - all_time
+        granularity:
+          type: string
+          enum:
+            - hour
+            - day
+            - week
+            - month
+            - year
+    AnalyticsQueryDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        metrics:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        dimensions:
+          type: array
+          items:
+            type: string
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterDto"
+        dateRange:
+          $ref: "#/components/schemas/DateRangeDto"
+        compareDateRange:
+          $ref: "#/components/schemas/DateRangeDto"
+        timezone:
+          type: string
+        order:
+          type: object
+        limit:
+          type: number
+          minimum: 1
+          maximum: 10000
+        havingMinSessions:
+          type: number
+          minimum: 1
+        table:
+          type: string
+          enum: &a24
+            - sessions
+            - pages
+            - goals
+      required:
+        - workspace_id
+        - metrics
+        - dateRange
+    ExtremesQueryDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        metric:
+          type: string
+        groupBy:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        dateRange:
+          $ref: "#/components/schemas/DateRangeDto"
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterDto"
+        timezone:
+          type: string
+        havingMinSessions:
+          type: number
+          minimum: 1
+        table:
+          type: string
+          enum: *a24
+      required:
+        - workspace_id
+        - metric
+        - groupBy
+        - dateRange
+    ExploreStateDto:
+      type: object
+      properties:
+        dimensions:
+          type: array
+          items:
+            type: string
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterDto"
+        period:
+          type: string
+          enum:
+            - previous_30_minutes
+            - today
+            - yesterday
+            - previous_7_days
+            - previous_14_days
+            - previous_28_days
+            - previous_30_days
+            - previous_90_days
+            - previous_91_days
+            - this_week
+            - previous_week
+            - this_month
+            - previous_month
+            - this_quarter
+            - previous_quarter
+            - this_year
+            - previous_year
+            - previous_12_months
+            - all_time
+        comparison:
+          type: string
+          enum:
+            - previous_period
+            - previous_year
+            - none
+        minSessions:
+          type: number
+        customStart:
+          type: string
+        customEnd:
+          type: string
+    MessageDto:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - user
+            - assistant
+        content:
+          type: string
+      required:
+        - role
+        - content
+    ChatRequestDto:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        prompt:
+          type: string
+          maxLength: 2000
+        current_state:
+          $ref: "#/components/schemas/ExploreStateDto"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageDto"
+      required:
+        - workspace_id
+        - prompt
