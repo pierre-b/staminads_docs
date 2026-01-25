@@ -1,17 +1,613 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Staminads API",
-    "description": "Web analytics platform for tracking TimeScore metrics",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://your-instance.example.com",
-      "description": "Your Staminads instance"
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
+    "/api/setup.status": {
+      "get": {
+        "operationId": "SetupController_status",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Setup status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "setupCompleted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Check if initial setup is complete",
+        "tags": [
+          "setup"
+        ]
+      }
+    },
+    "/api/setup.initialize": {
+      "post": {
+        "operationId": "SetupController_initialize",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitializeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Admin user created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "is_super_admin": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Setup already completed or user already exists"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Initialize the application with the first admin user",
+        "tags": [
+          "setup"
+        ]
+      }
+    },
+    "/api/auth.me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user profile"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get current user profile",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.updateProfile": {
+      "post": {
+        "operationId": "UsersController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updated user profile"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Update current user profile",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.changePassword": {
+      "post": {
+        "operationId": "UsersController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Password changed successfully"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Change current user password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [
+          {
+            "name": "x-forwarded-for",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user-agent",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Login with email and password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.forgotPassword": {
+      "post": {
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [
+          {
+            "name": "x-forwarded-for",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reset email sent (if email exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Request password reset email",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.resetPassword": {
+      "post": {
+        "operationId": "AuthController_resetPassword",
+        "parameters": [
+          {
+            "name": "x-forwarded-for",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired token"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Reset password with token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.sessions": {
+      "get": {
+        "operationId": "AuthController_sessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of active sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "ip_address": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "user_agent": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "expires_at": {
+                        "type": "string"
+                      },
+                      "revoked_at": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List active sessions",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.revokeSession": {
+      "post": {
+        "operationId": "AuthController_revokeSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Revoke a specific session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth.revokeAllSessions": {
+      "post": {
+        "operationId": "AuthController_revokeAllSessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All sessions revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Logout from all devices",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/smtp.info": {
+      "get": {
+        "operationId": "SmtpController_info",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SMTP info (status + settings)"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get SMTP status and settings",
+        "tags": [
+          "smtp"
+        ]
+      }
+    },
+    "/api/smtp.update": {
+      "post": {
+        "operationId": "SmtpController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSmtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated SMTP settings"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmtpSettingsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Update SMTP settings (owner only)",
+        "tags": [
+          "smtp"
+        ]
+      }
+    },
+    "/api/smtp.delete": {
+      "post": {
+        "operationId": "SmtpController_delete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSmtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SMTP settings removed"
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Remove workspace SMTP (fall back to global)",
+        "tags": [
+          "smtp"
+        ]
+      }
+    },
+    "/api/smtp.test": {
+      "post": {
+        "operationId": "SmtpController_test",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSmtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Test email sent"
+          },
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Send test email",
+        "tags": [
+          "smtp"
+        ]
+      }
+    },
     "/api/workspaces.list": {
       "get": {
         "operationId": "WorkspacesController_list",
@@ -31,6 +627,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "List workspaces for current user",
         "tags": [
           "workspaces"
@@ -62,6 +663,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get workspace by ID",
         "tags": [
           "workspaces"
@@ -94,6 +700,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Create a new workspace",
         "tags": [
           "workspaces"
@@ -126,6 +737,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Update an existing workspace",
         "tags": [
           "workspaces"
@@ -159,9 +775,1033 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Delete a workspace",
         "tags": [
           "workspaces"
+        ]
+      }
+    },
+    "/api/members.list": {
+      "get": {
+        "operationId": "MembersController_list",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workspace members with user details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "workspace_id": {
+                        "type": "string"
+                      },
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "owner",
+                          "admin",
+                          "editor",
+                          "viewer"
+                        ]
+                      },
+                      "invited_by": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "joined_at": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List all members of a workspace",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/members.get": {
+      "get": {
+        "operationId": "MembersController_get",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member details with user information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "workspace_id": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "owner",
+                        "admin",
+                        "editor",
+                        "viewer"
+                      ]
+                    },
+                    "invited_by": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joined_at": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Member not found"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get a specific member by user ID",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/members.updateRole": {
+      "post": {
+        "operationId": "MembersController_updateRole",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Member role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "workspace_id": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "owner",
+                        "admin",
+                        "editor",
+                        "viewer"
+                      ]
+                    },
+                    "invited_by": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joined_at": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions"
+          },
+          "404": {
+            "description": "Member not found"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Update a member's role",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/members.remove": {
+      "post": {
+        "operationId": "MembersController_remove",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveMemberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Member removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions"
+          },
+          "404": {
+            "description": "Member not found"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Remove a member from a workspace",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/members.leave": {
+      "post": {
+        "operationId": "MembersController_leave",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workspace_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "workspace_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully left workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot leave as last owner"
+          },
+          "404": {
+            "description": "Not a member of this workspace"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Leave a workspace voluntarily",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/members.transferOwnership": {
+      "post": {
+        "operationId": "MembersController_transferOwnership",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferOwnershipDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ownership transferred successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "old_owner": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "workspace_id": {
+                          "type": "string"
+                        },
+                        "user_id": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "invited_by": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "joined_at": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "new_owner": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "workspace_id": {
+                          "type": "string"
+                        },
+                        "user_id": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "invited_by": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "joined_at": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Only owners can transfer ownership"
+          },
+          "404": {
+            "description": "New owner not a member of workspace"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Transfer workspace ownership to another member",
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/apiKeys.create": {
+      "post": {
+        "operationId": "ApiKeysController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API key created successfully. Returns the full key (only once).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApiKeyResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Create a new API key",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/apiKeys.list": {
+      "get": {
+        "operationId": "ApiKeysController_list",
+        "parameters": [
+          {
+            "name": "user_id",
+            "required": false,
+            "in": "query",
+            "description": "Filter by user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workspace_id",
+            "required": false,
+            "in": "query",
+            "description": "Filter by workspace ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "enum": [
+                "active",
+                "revoked",
+                "expired"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List API keys with optional filters",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/apiKeys.get": {
+      "get": {
+        "operationId": "ApiKeysController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "API key ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get API key by ID",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/apiKeys.revoke": {
+      "post": {
+        "operationId": "ApiKeysController_revoke",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "API key ID to revoke"
+                  },
+                  "revoked_by": {
+                    "type": "string",
+                    "description": "User ID who is revoking the key"
+                  }
+                },
+                "required": [
+                  "id",
+                  "revoked_by"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Revoke an API key",
+        "tags": [
+          "api-keys"
+        ]
+      }
+    },
+    "/api/audit.list": {
+      "get": {
+        "operationId": "AuditController_list",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List audit logs with optional filters",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/api/audit.getByTarget": {
+      "get": {
+        "operationId": "AuditController_getByTarget",
+        "parameters": [
+          {
+            "name": "target_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get audit logs for a specific target",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/api/invitations.list": {
+      "get": {
+        "operationId": "InvitationsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pending invitations"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List workspace invitations",
+        "tags": [
+          "invitations"
+        ]
+      }
+    },
+    "/api/invitations.create": {
+      "post": {
+        "operationId": "InvitationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvitationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invitation created and email sent"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Send invitation email",
+        "tags": [
+          "invitations"
+        ]
+      }
+    },
+    "/api/invitations.resend": {
+      "post": {
+        "operationId": "InvitationsController_resend",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationIdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation email resent"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Resend invitation email",
+        "tags": [
+          "invitations"
+        ]
+      }
+    },
+    "/api/invitations.revoke": {
+      "post": {
+        "operationId": "InvitationsController_revoke",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationIdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation revoked"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Revoke pending invitation",
+        "tags": [
+          "invitations"
+        ]
+      }
+    },
+    "/api/invitations.get": {
+      "get": {
+        "operationId": "InvitationsController_get",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation details"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Get invitation details by token",
+        "tags": [
+          "invitations"
+        ]
+      }
+    },
+    "/api/invitations.accept": {
+      "post": {
+        "operationId": "InvitationsController_accept",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptInvitationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation accepted"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Accept invitation",
+        "tags": [
+          "invitations"
         ]
       }
     },
@@ -195,6 +1835,11 @@
             "description": "List of filters"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "List filters for workspace",
         "tags": [
           "filters"
@@ -227,6 +1872,11 @@
             "description": "Filter definition"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get filter by ID",
         "tags": [
           "filters"
@@ -252,6 +1902,11 @@
             "description": "Created filter"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Create filter",
         "tags": [
           "filters"
@@ -277,6 +1932,11 @@
             "description": "Updated filter"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Update filter",
         "tags": [
           "filters"
@@ -326,6 +1986,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Delete filter",
         "tags": [
           "filters"
@@ -368,6 +2033,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Reorder filters",
         "tags": [
           "filters"
@@ -392,6 +2062,11 @@
             "description": "List of unique tags"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "List unique tags across all filters",
         "tags": [
           "filters"
@@ -424,6 +2099,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Start background backfill for all filters",
         "tags": [
           "filters"
@@ -448,6 +2128,11 @@
             "description": "Task progress"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get backfill task status",
         "tags": [
           "filters"
@@ -479,6 +2164,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Cancel running backfill task",
         "tags": [
           "filters"
@@ -503,6 +2193,11 @@
             "description": "List of tasks"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "List backfill tasks for workspace",
         "tags": [
           "filters"
@@ -527,9 +2222,270 @@
             "description": "Backfill summary"
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get backfill status summary for workspace",
         "tags": [
           "filters"
+        ]
+      }
+    },
+    "/api/tools.websiteMeta": {
+      "post": {
+        "operationId": "ToolsController_websiteMeta",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebsiteMetaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Website metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebsiteMetaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to fetch metadata"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Fetch website title and logo",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools.favicon": {
+      "get": {
+        "operationId": "ToolsController_favicon",
+        "parameters": [
+          {
+            "name": "url",
+            "required": true,
+            "in": "query",
+            "description": "Website URL to fetch favicon for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favicon image binary"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Fetch and proxy website favicon",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/demo.generate": {
+      "post": {
+        "operationId": "DemoController_generate",
+        "parameters": [
+          {
+            "name": "secret",
+            "required": true,
+            "in": "query",
+            "description": "Demo secret from DEMO_SECRET environment variable",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "demo-secret": []
+          },
+          {}
+        ],
+        "summary": "Generate demo fixtures (10k sessions)",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/demo.delete": {
+      "post": {
+        "operationId": "DemoController_delete",
+        "parameters": [
+          {
+            "name": "secret",
+            "required": true,
+            "in": "query",
+            "description": "Demo secret from DEMO_SECRET environment variable",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "demo-secret": []
+          },
+          {}
+        ],
+        "summary": "Delete demo workspace and sessions",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/track": {
+      "post": {
+        "description": "Processes a session payload containing pageview and goal actions. Actions are deduplicated server-side using dedup_token.",
+        "operationId": "EventsController_track",
+        "parameters": [
+          {
+            "name": "origin",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referer",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionPayloadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session payload processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Track session with cumulative actions array",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/api/export.userEvents": {
+      "get": {
+        "description": "Export raw events for users with a user_id set. Supports cursor-based pagination for incremental sync.",
+        "operationId": "ExportController_getUserEvents",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "until",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user events with pagination cursor"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Export user events",
+        "tags": [
+          "export"
         ]
       }
     },
@@ -559,6 +2515,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Execute an analytics query",
         "tags": [
           "analytics"
@@ -591,6 +2552,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get min/max extremes of a metric across grouped data",
         "tags": [
           "analytics"
@@ -631,6 +2597,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get available metrics",
         "tags": [
           "analytics"
@@ -668,6 +2639,11 @@
             }
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get available dimensions",
         "tags": [
           "analytics"
@@ -683,14 +2659,524 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
         "summary": "Get available analytics tables",
         "tags": [
           "analytics"
         ]
       }
+    },
+    "/api/assistant.chat": {
+      "post": {
+        "description": "Creates a new chat job and returns a job ID. Use the stream endpoint to get results.",
+        "operationId": "AssistantController_chat",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string",
+                      "description": "Job ID for streaming"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Create an AI assistant chat job",
+        "tags": [
+          "assistant"
+        ]
+      }
+    },
+    "/api/assistant.stream/{jobId}": {
+      "get": {
+        "description": "Streams thinking text and tool calls, then emits final config. Supports reconnection.",
+        "operationId": "AssistantController_stream",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Stream AI assistant results via SSE",
+        "tags": [
+          "assistant"
+        ]
+      }
+    },
+    "/api/subscriptions.list": {
+      "get": {
+        "operationId": "SubscriptionsController_list",
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of subscription objects"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "List user subscriptions for a workspace",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.get": {
+      "get": {
+        "operationId": "SubscriptionsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription object"
+          },
+          "400": {
+            "description": "Subscription not found"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Get a single subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.create": {
+      "post": {
+        "operationId": "SubscriptionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscriptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created subscription object"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Create a new subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.update": {
+      "post": {
+        "operationId": "SubscriptionsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated subscription object"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Update a subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.delete": {
+      "post": {
+        "operationId": "SubscriptionsController_delete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "workspace_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response"
+          },
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Delete a subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.pause": {
+      "post": {
+        "operationId": "SubscriptionsController_pause",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "workspace_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Paused subscription object"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Pause a subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.resume": {
+      "post": {
+        "operationId": "SubscriptionsController_resume",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "workspace_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resumed subscription object"
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Resume a paused subscription",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.sendNow": {
+      "post": {
+        "operationId": "SubscriptionsController_sendNow",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "workspace_id": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response"
+          },
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": "Subscription or user not found"
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Send report immediately for testing",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.preview": {
+      "post": {
+        "operationId": "SubscriptionsController_preview",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewSubscriptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "HTML email content"
+          },
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Not a workspace member"
+          }
+        },
+        "security": [
+          {
+            "jwt-auth": []
+          }
+        ],
+        "summary": "Preview subscription report as HTML",
+        "tags": [
+          "subscriptions"
+        ]
+      }
+    },
+    "/api/subscriptions.unsubscribe": {
+      "get": {
+        "operationId": "SubscriptionsController_unsubscribe",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message"
+          },
+          "400": {
+            "description": "Invalid token or subscription not found"
+          },
+          "401": {
+            "description": "Expired token"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Unsubscribe via signed token",
+        "tags": [
+          "subscriptions"
+        ]
+      }
     }
   },
+  "info": {
+    "title": "Staminads API",
+    "description": "Web analytics platform for tracking TimeScore metrics",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
   "components": {
+    "securitySchemes": {
+      "jwt-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "JWT",
+        "description": "Enter JWT token",
+        "in": "header"
+      },
+      "demo-secret": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "secret",
+        "description": "Demo secret for demo endpoints"
+      },
+      "api-key": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "API key in format: sk_live_..."
+      }
+    },
     "schemas": {
       "InitializeDto": {
         "type": "object",
@@ -1603,33 +4089,6 @@
           }
         }
       },
-      "CurrentPageDto": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "maxLength": 2048
-          },
-          "page_number": {
-            "type": "number",
-            "minimum": 1
-          },
-          "entered_at": {
-            "type": "number"
-          },
-          "scroll": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 100
-          }
-        },
-        "required": [
-          "path",
-          "page_number",
-          "entered_at",
-          "scroll"
-        ]
-      },
       "SessionAttributesDto": {
         "type": "object",
         "properties": {
@@ -1716,13 +4175,6 @@
               "type": "object"
             }
           },
-          "current_page": {
-            "$ref": "#/components/schemas/CurrentPageDto"
-          },
-          "checkpoint": {
-            "type": "number",
-            "minimum": 0
-          },
           "attributes": {
             "$ref": "#/components/schemas/SessionAttributesDto"
           },
@@ -1737,6 +4189,14 @@
           },
           "sent_at": {
             "type": "number"
+          },
+          "user_id": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 256
+          },
+          "dimensions": {
+            "type": "object"
           }
         },
         "required": [
@@ -1783,6 +4243,35 @@
         "required": [
           "dimension",
           "operator"
+        ]
+      },
+      "MetricFilterDto": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "gt",
+              "gte",
+              "lt",
+              "lte",
+              "between"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "metric",
+          "operator",
+          "values"
         ]
       },
       "DateRangeDto": {
@@ -1855,6 +4344,12 @@
               "$ref": "#/components/schemas/FilterDto"
             }
           },
+          "metricFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricFilterDto"
+            }
+          },
           "dateRange": {
             "$ref": "#/components/schemas/DateRangeDto"
           },
@@ -1883,6 +4378,13 @@
               "pages",
               "goals"
             ]
+          },
+          "totalsGroupBy": {
+            "description": "When set, enables \"filtered totals\" mode for queries with no dimensions.\nThe query will:\n1. Group by these dimensions in an inner subquery\n2. Apply metricFilters via HAVING clause\n3. Aggregate the filtered results in an outer query\n\nUse this for totals that should respect metricFilters.\nExample: Get total sessions where bounce_rate > 50%, grouped by landing_path.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -1914,6 +4416,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "metricFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricFilterDto"
             }
           },
           "timezone": {
@@ -2034,11 +4542,273 @@
             "items": {
               "$ref": "#/components/schemas/MessageDto"
             }
+          },
+          "generate_title": {
+            "type": "boolean"
+          },
+          "current_page": {
+            "type": "string"
           }
         },
         "required": [
           "workspace_id",
           "prompt"
+        ]
+      },
+      "CreateSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "day_of_week": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "day_of_month": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 28
+          },
+          "hour": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 23
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "string",
+            "enum": [
+              "sessions",
+              "median_duration",
+              "bounce_rate",
+              "median_scroll"
+            ],
+            "minItems": 1
+          },
+          "dimensions": {
+            "type": "string",
+            "enum": [
+              "landing_path",
+              "exit_path",
+              "referrer_domain",
+              "channel",
+              "channel_group",
+              "utm_campaign",
+              "utm_source",
+              "utm_medium",
+              "utm_content",
+              "utm_term",
+              "country",
+              "device",
+              "browser",
+              "os",
+              "goal_name"
+            ]
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "limit": {
+            "type": "number",
+            "enum": [
+              5,
+              10,
+              15,
+              20,
+              50
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "name",
+          "frequency",
+          "metrics"
+        ]
+      },
+      "UpdateSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "workspace_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "day_of_week": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "day_of_month": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 28
+          },
+          "hour": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 23
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "string",
+            "enum": [
+              "sessions",
+              "median_duration",
+              "bounce_rate",
+              "median_scroll"
+            ],
+            "minItems": 1
+          },
+          "dimensions": {
+            "type": "string",
+            "enum": [
+              "landing_path",
+              "exit_path",
+              "referrer_domain",
+              "channel",
+              "channel_group",
+              "utm_campaign",
+              "utm_source",
+              "utm_medium",
+              "utm_content",
+              "utm_term",
+              "country",
+              "device",
+              "browser",
+              "os",
+              "goal_name"
+            ]
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "limit": {
+            "type": "number",
+            "enum": [
+              5,
+              10,
+              15,
+              20,
+              50
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id"
+        ]
+      },
+      "PreviewSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "day_of_week": {
+            "type": "number"
+          },
+          "day_of_month": {
+            "type": "number"
+          },
+          "metrics": {
+            "type": "string",
+            "enum": [
+              "sessions",
+              "median_duration",
+              "bounce_rate",
+              "median_scroll"
+            ],
+            "minItems": 1
+          },
+          "dimensions": {
+            "type": "string",
+            "enum": [
+              "landing_path",
+              "exit_path",
+              "referrer_domain",
+              "channel",
+              "channel_group",
+              "utm_campaign",
+              "utm_source",
+              "utm_medium",
+              "utm_content",
+              "utm_term",
+              "country",
+              "device",
+              "browser",
+              "os",
+              "goal_name"
+            ]
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            }
+          },
+          "limit": {
+            "type": "number",
+            "enum": [
+              5,
+              10,
+              15,
+              20,
+              50
+            ]
+          }
+        },
+        "required": [
+          "workspace_id",
+          "name",
+          "frequency",
+          "metrics"
         ]
       }
     }

@@ -119,6 +119,9 @@ const sessionId = await Staminads.getSessionId();
 // Get persistent visitor ID
 const visitorId = await Staminads.getVisitorId();
 
+// Get authenticated user ID (if set)
+const userId = await Staminads.getUserId();
+
 // Get active engagement time (milliseconds)
 const focusDuration = await Staminads.getFocusDuration();
 
@@ -218,6 +221,35 @@ await Staminads.clearDimensions();
 Custom dimensions are sent as `stm_1` through `stm_10` in events. Label them in **Workspace Settings > Custom Dimensions** for readable reports.
 </Tip>
 
+### User Identification
+
+Associate sessions with authenticated users for cross-device tracking and user-level analytics:
+
+```javascript
+// Set user ID after login
+await Staminads.setUserId('user_12345');
+
+// Get current user ID
+const userId = await Staminads.getUserId();
+
+// Clear user ID on logout
+await Staminads.setUserId(null);
+```
+
+| Behavior | Description |
+|----------|-------------|
+| Persistence | User ID persists across page reloads and sessions |
+| Max length | 256 characters |
+| Reset | Calling `reset()` clears the user ID |
+
+<Warning>
+**Consent required**: Linking analytics data to user identifiers requires explicit user consent under GDPR, ePrivacy Directive, and similar privacy regulations. Only call `setUserId()` after obtaining valid consent for analytics tracking. Ensure your privacy policy discloses this data collection.
+</Warning>
+
+<Tip>
+Set the user ID immediately after login (and consent) to ensure all subsequent events are associated with the user.
+</Tip>
+
 ### Control Methods
 
 ```javascript
@@ -227,7 +259,7 @@ await Staminads.pause();
 // Resume tracking
 await Staminads.resume();
 
-// Reset session (start fresh)
+// Reset session (start fresh, clears user ID)
 await Staminads.reset();
 ```
 
