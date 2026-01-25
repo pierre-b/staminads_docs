@@ -75,6 +75,13 @@
               "GET /api/filters.backfillList",
               "GET /api/filters.backfillSummary"
             ]
+          },
+          {
+            "group": "Export",
+            "openapi": "openapi.json",
+            "pages": [
+              "GET /api/export.userEvents"
+            ]
           }
         ]
       }

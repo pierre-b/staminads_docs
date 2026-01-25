@@ -18,6 +18,7 @@ ALLOWED_PREFIXES = [
     '/api/analytics.',
     '/api/workspaces.',
     '/api/filters.',
+    '/api/export.',
 ]
 
 def main():
